@@ -3,9 +3,13 @@ from django.db import models
 # Create your models here.
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.core.exceptions import ValidationError
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
+        '''
+        Creates and saves a User with the given email and password.
+        '''
         if not email:
             raise ValueError("The Email field must be set")
         email = self.normalize_email(email)
@@ -15,6 +19,9 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
+        '''
+        Creates and saves a superuser with the given email and password.
+        '''
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -38,6 +45,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
+    
+    def clean(self):
+        '''
+        Cutom clean method for the emailfield method to print custom error message
+        '''
+        if '@' not in self.email:
+            raise ValidationError({'email': 'The email must contain an "@" symbol.'})
 
     def __str__(self):
+        '''
+        Return a string representation of the user's email
+        '''
         return self.email
