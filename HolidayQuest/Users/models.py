@@ -12,9 +12,12 @@ class UserManager(BaseUserManager):
         '''
         if not email:
             raise ValueError("The Email field must be set")
+        # normalize_email() keeps the entered email in lower cases
         email = self.normalize_email(email)
+        # self.model equates to User() class
         user = self.model(email=email, **extra_fields)
-        user.set_password(password)  # Hash the password
+        # Hash the password
+        user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -41,14 +44,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
-    objects = UserManager()  # Assign the custom UserManager
+    # Assign the custom UserManager
+    objects = UserManager()
 
+    '''
+    The USERNAME_FIELD attribute specifies the field in your model that will be used
+    as the unique identifier for the user. By default, Django uses the username
+    '''
     USERNAME_FIELD = 'email'
+    '''
+    The REQUIRED_FIELDS attribute specifies a list of fields that must be provided when using
+    the createsuperuser management command or when creating a user programmatically.
+    These fields are in addition to the USERNAME_FIELD, which is always required.
+    '''
     REQUIRED_FIELDS = ['first_name', 'last_name']
     
     def clean(self):
         '''
-        Cutom clean method for the emailfield method to print custom error message
+        Cutom clean used by the EmailField() method to print custom error message.
         '''
         if '@' not in self.email:
             raise ValidationError({'email': 'The email must contain an "@" symbol.'})
