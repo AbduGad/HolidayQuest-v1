@@ -3,9 +3,16 @@ from .models import User
 
 
 class User_serializer(serializers.ModelSerializer):
+    """
+    Serializer for User model
+    """
+    # stops the password from appearing in the http response
     password = serializers.CharField(write_only=True)
     
     class Meta:
+        """
+        Meta class for User_serializer to define its model and fields that it will work on
+        """
         model = User
         fields = ['id', 'first_name', 'last_name', 'email', 'password']
         
