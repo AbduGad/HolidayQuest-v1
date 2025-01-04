@@ -5,8 +5,9 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from Users.models import User
 
+
 class UserModelTest(TestCase):
-    
+
     def test_invalid_email(self):
         """Test that an invalid email raises a ValidationError"""
         with self.assertRaises(ValidationError):
@@ -29,7 +30,7 @@ class UserModelTest(TestCase):
         user.full_clean()  # This will run the validation
         self.assertEqual(user.email, "john.doe@example.com")
         self.assertTrue(user.check_password("securepassword123"))
-    
+
     def test_email_contains_at_symbol(self):
         """Test that the email contains '@'"""
         user = User.objects.create_user(
@@ -40,9 +41,6 @@ class UserModelTest(TestCase):
         )
         # Check if email contains '@'
         self.assertIn('@', user.email)
-
-
-
 
 
 # # import os
@@ -63,16 +61,13 @@ class UserModelTest(TestCase):
 # )
 # print(user)
 # user.delete()
-
 # from django.core.exceptions import ValidationError
-
 # user = User(
 #     email="john.doeexample.com",
 #     password="securepassword123",
 #     first_name="John",
 #     last_name="Doe"
 # )
-
 # try:
 #     user.full_clean()  # This will run model-level validations
 #     user.save()
