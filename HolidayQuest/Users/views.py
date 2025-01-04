@@ -20,6 +20,8 @@ class register_view(APIView):
         """
         Creates the new user. POST request
         """
+        if '@' not in request.data['email']:
+            raise ValidationError({'error': ['email must contain @ ']})
         serializer = User_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
