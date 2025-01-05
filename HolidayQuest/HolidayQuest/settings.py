@@ -31,11 +31,12 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+
     'Users',
     'Models',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_framework_simplejwt.token_blacklist', # for token revocation
+    'rest_framework_simplejwt.token_blacklist',  # for token revocation
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

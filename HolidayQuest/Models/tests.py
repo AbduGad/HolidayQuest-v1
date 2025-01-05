@@ -1,6 +1,10 @@
 from django.test import TestCase
 from .models import Country, City, Hotel
+from .serializers import HotelSerializer
 from django.utils import timezone
+from django.test import TestCase
+from rest_framework.test import APITestCase
+from rest_framework import status
 
 
 class CountryModelTest(TestCase):
@@ -60,3 +64,94 @@ class HotelModelTest(TestCase):
 
     def test_hotel_str(self):
         self.assertEqual(str(self.hotel), "Hotel Cairo")
+
+
+class HotelApiTest(APITestCase):
+    def setUp(self):
+        self.country = Country.objects.create(name='Egypt')
+        self.city = City.objects.create(name='Cairo', country=self.country)
+
+        self.valid_data = {
+            'name': 'Hotel A',
+            'address': '123 Street, Cairo',
+            'country': self.country.name,
+            'city': self.city.name,
+            "rooms_available": 10,
+            "total_rooms": 50, "price": 250, "description": "some text"
+        }
+
+    def test_create_hotel(self):
+        response = self.client.post(
+            '/api/create-hotel/',
+            self.valid_data,
+            format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_hotel_with_missing_name(self):
+        data_without_name = self.valid_data.copy()
+        data_without_name['name'] = None
+
+        response = self.client.post(
+            '/api/create-hotel/', data_without_name, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check if the error is for the missing name field
+        self.assertIn('name', response.data)
+
+    def test_create_hotel_with_missing_country(self):
+        data_without_name = self.valid_data.copy()
+        data_without_name['country'] = ''
+
+        response = self.client.post(
+            '/api/create-hotel/',
+            data_without_name,
+            format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # Check if the error is for the missing name field
+        self.assertIn('country', response.data)
+
+    def test_create_duplicate_hotel_with_same_name_different_address(self):
+        import copy
+        data_with_diff_Address = copy.deepcopy(self.valid_data)
+        data_with_diff_Address["address"] = "New address"
+
+        # Try to create the same hotel again
+        first_response = self.client.post(
+            '/api/create-hotel/',
+            self.valid_data, format='json')
+
+        second_response = self.client.post(
+            '/api/create-hotel/',
+            data_with_diff_Address, format='json')
+
+        error_detail = second_response.data['non_field_errors'][0]
+        # Convert ErrorDetail to its string representation
+        error_message = str(error_detail)
+
+        # Now assert against the expected error message string
+        self.assertEqual(
+            error_message,
+            'A hotel with the same name already exists'
+        )
+
+    def test_create_duplicate_hotel_with_same_address(self):
+        import copy
+        data_with_diff_Name = copy.deepcopy(self.valid_data)
+        data_with_diff_Name["name"] = "new hotel !"
+        # First hotel creation
+        self.client.post('/api/create-hotel/', self.valid_data, format='json')
+
+        # Try to create the same hotel again
+        response = self.client.post(
+            '/api/create-hotel/', data_with_diff_Name, format='json')
+
+        # This is an ErrorDetail object
+        error_detail = response.data['non_field_errors'][0]
+        # Convert ErrorDetail to its string representation
+        error_message = str(error_detail)
+
+        # Now assert against the expected error message string
+        self.assertEqual(
+            error_message,
+            'A hotel with the same address already exists'
+        )
