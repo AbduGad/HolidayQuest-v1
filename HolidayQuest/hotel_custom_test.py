@@ -15,7 +15,8 @@ def insert_and_test_hotel():
 
     # Step 2: Insert "Alex" city if it doesn't exist
     city, created = City.objects.get_or_create(
-        name="sharm el sheikh", country=country)
+        name="sharm el sheikh", country=country
+    )
     print(
         f"City created: {created}, City: {city.name}, Country: {city.country.name}")
 

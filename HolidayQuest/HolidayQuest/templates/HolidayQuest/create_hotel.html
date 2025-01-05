@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Create Hotel</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f9;
+      }
+      h1 {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 2em;
+      }
+      form {
+        max-width: 600px;
+        margin: 30px auto;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      input,
+      textarea,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        font-size: 1em;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      textarea {
+        resize: vertical;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        margin-top: 20px;
+        font-size: 1.2em;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .error-message {
+        color: red;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Create a New Hotel</h1>
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="{{ form.name.id_for_label }}">Hotel Name:</label>
+        {{ form.name }}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.address.id_for_label }}">Address:</label>
+        {{ form.address }}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.price.id_for_label }}">Price:</label>
+        {{ form.price }}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.description.id_for_label }}">Description:</label>
+        {{ form.description }}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.rooms_available.id_for_label }}"
+          >Rooms Available:</label
+        >
+        {{ form.rooms_available }}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.total_rooms.id_for_label }}">Total Rooms:</label>
+        {{ form.total_rooms }}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.country.id_for_label }}">Country:</label>
+        {{ form.country }}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.city.id_for_label }}">City:</label>
+        {{ form.city }}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.image.id_for_label }}">Hotel Image:</label>
+        {{ form.image }}
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  </body>
+</html>

@@ -1,4 +1,5 @@
 from django.db import models
+from PIL import Image  # Importing PIL for image manipulation if needed
 
 # Country model
 
@@ -46,6 +47,17 @@ class Hotel(models.Model):
     total_rooms = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    image = models.ImageField(
+        upload_to='hotel_images/', null=True, blank=False)
 
     def __str__(self):
         return self.name
+
+    # def save(self, *args, **kwargs):
+    #     # If an image is provided, resize it to a maximum of 1024x1024 pixels
+    #     if self.image:
+    #         img = Image.open(self.image)
+    #         if img.height > 1024 or img.width > 1024:
+    #             img.thumbnail((1024, 1024))
+    #             img.save(self.image.path)  # Save the resized image
+    #     super().save(*args, **kwargs)

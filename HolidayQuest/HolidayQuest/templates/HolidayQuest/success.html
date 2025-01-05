@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Success</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #d4edda;
+        color: #155724;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+      }
+      h1 {
+        background-color: #c3e6cb;
+        padding: 20px;
+        border-bottom: 2px solid #8fd5a2;
+      }
+      p {
+        font-size: 18px;
+        margin: 20px;
+      }
+      .container {
+        padding: 50px;
+      }
+      .success-message {
+        font-weight: bold;
+        font-size: 20px;
+        color: #155724;
+      }
+      .hotel-details {
+        margin-top: 20px;
+        text-align: left;
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        padding: 20px;
+        border: 1px solid #c3e6cb;
+        border-radius: 8px;
+      }
+      .hotel-details p {
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Hotel Created Successfully!</h1>
+      <div class="hotel-details">
+        <p><strong>Hotel Name:</strong> {{ data.name }}</p>
+        <p><strong>Address:</strong> {{ data.address }}</p>
+        <p><strong>Price:</strong> ${{ data.price }}</p>
+        <p><strong>Description:</strong> {{ data.description }}</p>
+        <p><strong>Rooms Available:</strong> {{ data.rooms_available }}</p>
+        <p><strong>Total Rooms:</strong> {{ data.total_rooms }}</p>
+        <p><strong>Country:</strong> {{ data.country }}</p>
+        <p><strong>City:</strong> {{ data.city }}</p>
+      </div>
+    </div>
+  </body>
+</html>
