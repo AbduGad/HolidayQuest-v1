@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     "rest_framework",
     'Users',
     'Models',
-    'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',  # for token revocation
     'django.contrib.admin',
