@@ -53,12 +53,9 @@ from django.shortcuts import get_object_or_404
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def create_hotel(request):
-    print("FILES:", request.FILES)
-    print("POST:", request.POST)
 
     # Combine the data
     data = request.POST.dict()
-    print(" if request.FILES.get('image') ", request.FILES.get('image'))
     if request.FILES.get('image'):
         data['image'] = request.FILES['image']
 
@@ -68,7 +65,6 @@ def create_hotel(request):
         hotel_serializer.save()
         return Response(hotel_serializer.data, status=status.HTTP_201_CREATED)
     else:
-        print("Error in serializer:", hotel_serializer.errors)
         return Response(hotel_serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
 

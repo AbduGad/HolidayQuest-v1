@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 
 class CountryModelTest(TestCase):
@@ -79,21 +80,31 @@ class HotelApiTest(APITestCase):
             "rooms_available": 10,
             "total_rooms": 50, "price": 250, "description": "some text"
         }
+        with open("./media/hotel_images/4seasonjpg.jpg", "rb") as image_file:
+            image_content = image_file.read()
+
+        image = SimpleUploadedFile(
+            name="4seasonjpg.jpg",
+            content=image_content,
+            content_type="image/jpeg"
+        )
+        self.valid_data["image"] = image
 
     def test_create_hotel(self):
+
         response = self.client.post(
             '/api/create-hotel/',
-            self.valid_data,
-            format='json')
+            data=self.valid_data,
+        )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_hotel_with_missing_name(self):
         data_without_name = self.valid_data.copy()
-        data_without_name['name'] = None
+        data_without_name['name'] = ""
 
         response = self.client.post(
-            '/api/create-hotel/', data_without_name, format='json')
+            '/api/create-hotel/', data_without_name)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Check if the error is for the missing name field
         self.assertIn('name', response.data)
@@ -104,31 +115,40 @@ class HotelApiTest(APITestCase):
 
         response = self.client.post(
             '/api/create-hotel/',
-            data_without_name,
-            format='json')
+            data=data_without_name,
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Check if the error is for the missing name field
         self.assertIn('country', response.data)
 
     def test_create_duplicate_hotel_with_same_name_different_address(self):
         import copy
-        data_with_diff_Address = copy.deepcopy(self.valid_data)
-        data_with_diff_Address["address"] = "New address"
 
-        # Try to create the same hotel again
+        # Create complete data dictionary including the file
+        complete_data = copy.deepcopy(self.valid_data)
+
+        # Create the data for the second request
+        data_with_diff_address = copy.deepcopy(complete_data)
+        data_with_diff_address['address'] = "New address"
+        # Need to create a new file object for the second request
+
+        # First request
         first_response = self.client.post(
             '/api/create-hotel/',
-            self.valid_data, format='json')
+            data=complete_data,
+            format='multipart'
+        )
 
+        # Second request
         second_response = self.client.post(
             '/api/create-hotel/',
-            data_with_diff_Address, format='json')
+            data=data_with_diff_address,
+            format='multipart'
+        )
 
         error_detail = second_response.data['non_field_errors'][0]
-        # Convert ErrorDetail to its string representation
         error_message = str(error_detail)
 
-        # Now assert against the expected error message string
         self.assertEqual(
             error_message,
             'A hotel with the same name already exists'
@@ -136,21 +156,34 @@ class HotelApiTest(APITestCase):
 
     def test_create_duplicate_hotel_with_same_address(self):
         import copy
-        data_with_diff_Name = copy.deepcopy(self.valid_data)
-        data_with_diff_Name["name"] = "new hotel !"
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        # Create a test image file
+
+        # Create complete data dictionary including the file for first request
+        complete_data = copy.deepcopy(self.valid_data)
+        # Create data for second request with different name
+        data_with_diff_name = copy.deepcopy(complete_data)
+        data_with_diff_name['name'] = "new hotel !"
+        # Need to create a new file object for the second request
+
         # First hotel creation
-        self.client.post('/api/create-hotel/', self.valid_data, format='json')
+        first_res = self.client.post(
+            '/api/create-hotel/',
+            data=complete_data,
+            format='multipart'
+        )
 
-        # Try to create the same hotel again
+        # Try to create the same hotel again with different name
         response = self.client.post(
-            '/api/create-hotel/', data_with_diff_Name, format='json')
+            '/api/create-hotel/',
+            data=data_with_diff_name,
+            format='multipart'
+        )
 
-        # This is an ErrorDetail object
         error_detail = response.data['non_field_errors'][0]
-        # Convert ErrorDetail to its string representation
         error_message = str(error_detail)
 
-        # Now assert against the expected error message string
         self.assertEqual(
             error_message,
             'A hotel with the same address already exists'

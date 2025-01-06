@@ -71,11 +71,6 @@ def create_hotel_form(request):
                 files=files
             )
 
-            print(
-                "Response:",
-                response.status_code,
-                response.content)  # Debug print
-
             if response.status_code == 201:
                 return render(
                     request, 'HolidayQuest/success.html', {'data': data})

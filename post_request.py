@@ -10,8 +10,13 @@ data = {
     "rooms_available": 20,
     "total_rooms": 50,
     "country": "Egypt",  # country name
-    "city": "Cairo"      # city name
+    "city": "Cairo"    # city name
+
 }
-response = requests.post(url, json=data)
+files = {
+    "image": open("/mnt/c/Users/ahmed/Downloads/grand_hotel.jpeg", "rb"),
+}
+
+response = requests.post(url, data=data, files=files)
 print(response.status_code)
 print(response.json())
