@@ -84,14 +84,13 @@ class CitySerializer(serializers.ModelSerializer):
 #         return hotel
 from rest_framework import serializers
 from .models import Hotel, Country, City
-from django.conf import settings
 
 
 class HotelSerializer(serializers.ModelSerializer):
     country = serializers.CharField(write_only=True, required=True)
     city = serializers.CharField(write_only=True, required=True)
     # Add ImageField to handle image uploads
-    image = serializers.SerializerMethodField()
+    image = serializers.ImageField(required=True)
 
     class Meta:
         model = Hotel
@@ -103,6 +102,8 @@ class HotelSerializer(serializers.ModelSerializer):
     def validate(self, data):
         # Extract the name, address, country_name, and city_name from the
         # validated data
+        print("data", data.get("image"))
+
         hotel_name = data.get('name')
         address = data.get('address')
         country_name = data.get('country')
@@ -150,9 +151,3 @@ class HotelSerializer(serializers.ModelSerializer):
         hotel = Hotel.objects.create(
             country=country, city=city, **validated_data)
         return hotel
-
-    def get_image(self, obj):
-        request = self.context.get('request')
-        if obj.image and request:
-            return request.build_absolute_uri(obj.image.url)
-        return None

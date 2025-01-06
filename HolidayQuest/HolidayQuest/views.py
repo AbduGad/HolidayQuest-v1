@@ -37,6 +37,7 @@ from .forms import HotelForm
 #         form = HotelForm()
 
 #     return render(request, 'HolidayQuest/create_hotel.html', {'form': form})
+# http://127.0.0.1:8000/create-hotel-form/
 def create_hotel_form(request):
     if request.method == 'POST':
         form = HotelForm(request.POST, request.FILES)

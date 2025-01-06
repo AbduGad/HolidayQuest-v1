@@ -7,7 +7,7 @@ from .models import Hotel, Country, City
 from .serializers import HotelSerializer, CountrySerializer, CitySerializer
 from HolidayQuest.forms import HotelForm
 import requests
-
+from django.shortcuts import get_object_or_404
 # Allow anyone to access this view
 
 
@@ -48,6 +48,8 @@ import requests
 #         print("Error in serializer:", hotel_serializer.errors)
 #         return Response(hotel_serializer.errors,
 #                         status=status.HTTP_400_BAD_REQUEST)
+
+# http://127.0.0.1:8000/api/create-hotel/
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def create_hotel(request):
@@ -56,6 +58,7 @@ def create_hotel(request):
 
     # Combine the data
     data = request.POST.dict()
+    print(" if request.FILES.get('image') ", request.FILES.get('image'))
     if request.FILES.get('image'):
         data['image'] = request.FILES['image']
 
@@ -75,6 +78,8 @@ class CustomPagination(PageNumberPagination):
     page_size_query_param = 'page_size'  # Allow overriding via query parameters
     max_page_size = 100  # Maximum items per page
 
+# http://localhost:8000/api/get-hotels/
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -93,3 +98,33 @@ def get_hotels(request):
 
     # Return paginated response
     return paginator.get_paginated_response(hotel_serializer.data)
+
+# http://localhost:8000/api/get-hotel/?id=1
+# http://localhost:8000/api/get-hotel/?name=four%20seasons
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_hotel_detail(request):
+    hotel_id = request.query_params.get('id')
+    hotel_name = request.query_params.get('name')
+
+    try:
+        if hotel_id:
+            hotel = get_object_or_404(Hotel, id=hotel_id)
+        elif hotel_name:
+            hotel = get_object_or_404(Hotel, name__iexact=hotel_name)
+        else:
+            return Response(
+                {"error": "Please provide either hotel id or name"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = HotelSerializer(hotel, context={'request': request})
+        return Response(serializer.data)
+
+    except Hotel.DoesNotExist:
+        return Response(
+            {"error": "Hotel not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
