@@ -4,52 +4,16 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.pagination import PageNumberPagination
 from .models import Hotel, Country, City
-from .serializers import HotelSerializer, CountrySerializer, CitySerializer
+from .serializers import EditHotelSerializer, HotelSerializer, CountrySerializer, CitySerializer
 from HolidayQuest.forms import HotelForm
 import requests
 from django.shortcuts import get_object_or_404
 # Allow anyone to access this view
-
-
-# @api_view(['POST'])
-# @permission_classes([AllowAny])
-# def create_hotel(request):
-#     hotel_serializer = HotelSerializer(data=request.data)
-#     # print(
-#     #     "image empty?",
-#     #     hotel_serializer.is_valid(),
-#     #     not request.data.get("image"))
-
-#     if hotel_serializer.is_valid():
-#         hotel_serializer.save()
-#         return Response(hotel_serializer.data, status=status.HTTP_201_CREATED)
-#     else:
-#         # Log or print the errors for debugging
-#         print("Error in serializer:", hotel_serializer.errors)  # Log the errors
-#         return Response(hotel_serializer.errors,
-#                         status=status.HTTP_400_BAD_REQUEST)
-######################
-# @api_view(['POST'])
-# @permission_classes([AllowAny])
-# def create_hotel(request):
-#     # Combine request.data and request.FILES
-#     data = request.data.copy()
-#     data.update(request.FILES)
-
-#     hotel_serializer = HotelSerializer(data=data)
-
-#     print("Files:", request.FILES)  # Debug print
-#     print("Data:", data)  # Debug print
-
-#     if hotel_serializer.is_valid():
-#         hotel_serializer.save()
-#         return Response(hotel_serializer.data, status=status.HTTP_201_CREATED)
-#     else:
-#         print("Error in serializer:", hotel_serializer.errors)
-#         return Response(hotel_serializer.errors,
-#                         status=status.HTTP_400_BAD_REQUEST)
+from django.http import JsonResponse
 
 # http://127.0.0.1:8000/api/create-hotel/
+
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def create_hotel(request):
@@ -124,3 +88,55 @@ def get_hotel_detail(request):
             {"error": "Hotel not found"},
             status=status.HTTP_404_NOT_FOUND
         )
+
+
+# http://127.0.0.1:8000/api/edit-hotel/
+@api_view(['PUT'])
+@permission_classes([AllowAny])
+def edit_hotel(request):
+    hotel_id = request.GET.get('hotel_id')
+    if not hotel_id:
+        return JsonResponse({"detail": "Hotel ID is required."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        hotel = Hotel.objects.get(id=hotel_id)
+    except Hotel.DoesNotExist:
+        return JsonResponse({"detail": "Hotel not found."},
+                            status=status.HTTP_404_NOT_FOUND)
+
+    # Prepare the data
+    data = request.data.copy()
+    if request.FILES.get('image'):
+        data['image'] = request.FILES['image']
+
+    hotel_serializer = EditHotelSerializer(hotel, data=data, partial=True)
+    if hotel_serializer.is_valid():
+        hotel_serializer.save()
+        return JsonResponse(hotel_serializer.data, status=status.HTTP_200_OK)
+    else:
+        return JsonResponse(hotel_serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+# http://127.0.0.1:8000/api/Delete-hotel/
+
+
+@api_view(['DELETE'])
+@permission_classes([AllowAny])
+def delete_hotel(request):
+    # Get hotel ID from query parameters
+    hotel_id = request.query_params.get('id')
+
+    if not hotel_id:
+        return Response({'error': 'Hotel ID is required'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Fetch the hotel object by ID
+        hotel = Hotel.objects.get(id=hotel_id)
+        hotel.delete()  # Delete the hotel from the database
+        return Response({'message': 'Hotel deleted successfully'},
+                        status=status.HTTP_204_NO_CONTENT)
+    except Hotel.DoesNotExist:
+        return Response({'error': 'Hotel not found'},
+                        status=status.HTTP_404_NOT_FOUND)
