@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError, AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializer import User_serializer
-from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from.models import User
 
 
@@ -31,6 +31,7 @@ class register_view(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
 
 class login_view(APIView):
     """
@@ -67,6 +68,21 @@ class login_view(APIView):
         response.set_cookie(key='jwt', value=refresh_token, httponly=True)
         
         return response
+
+
+class logout_view(APIView):
+    """
+    API endpoint to log out a user by deleting the JWT cookie.
+    """
+    # Only authenticated users can access this endpoint
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        response = Response({"message": "Logout successful."})
+        # Delete the JWT cookie
+        response.delete_cookie('jwt')
+        return response
+
     
 # class CreateSuperuserView(APIView):
 #     """
