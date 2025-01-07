@@ -6,6 +6,8 @@ from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.core.files.uploadedfile import SimpleUploadedFile
+from rest_framework import status
+from django.urls import reverse
 
 
 class CountryModelTest(TestCase):
@@ -188,3 +190,107 @@ class HotelApiTest(APITestCase):
             error_message,
             'A hotel with the same address already exists'
         )
+
+
+class EditHotelEndpointTests(APITestCase):
+    def setUp(self):
+        # Create a sample hotel for testing
+        self.country = Country.objects.create(name='Egypt')
+        self.city = City.objects.create(name='Cairo', country=self.country)
+
+        self.hotel = Hotel.objects.create(
+            name="Test Hotel",
+            address="123 Test St.",
+            price=500,
+            description="A test description.",
+            rooms_available=10,
+            total_rooms=20,
+            country=self.country,
+            city=self.city
+        )
+        # Update with the correct name if needed
+        self.edit_hotel_url = reverse('edit-hotel')
+
+    def test_edit_hotel_successful(self):
+        """Test successful update of multiple fields of a hotel."""
+        data = {
+            "name": "Updated Hotel",
+            "address": "456 New Address",
+            "price": 650,
+            "description": "Updated description.",
+            "rooms_available": 15,
+            "country": "Newland",
+            "city": "New City"
+        }
+        response = self.client.put(
+            f"{self.edit_hotel_url}?hotel_id={self.hotel.id}", data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verify that the hotel's fields were updated
+        self.hotel.refresh_from_db()
+        self.assertEqual(self.hotel.name, "Updated Hotel")
+        self.assertEqual(self.hotel.address, "456 New Address")
+        self.assertEqual(self.hotel.price, 650)
+        self.assertEqual(self.hotel.description, "Updated description.")
+        self.assertEqual(self.hotel.rooms_available, 15)
+        self.assertEqual(self.hotel.country.name, "Newland")
+        self.assertEqual(self.hotel.city.name, "New City")
+
+    def test_edit_hotel_partial_update(self):
+        """Test partial update of a hotel's fields."""
+        data = {
+            "price": 700,
+            "rooms_available": 5
+        }
+        response = self.client.put(
+            f"{self.edit_hotel_url}?hotel_id={self.hotel.id}", data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verify that only the specified fields were updated
+        self.hotel.refresh_from_db()
+        self.assertEqual(self.hotel.price, 700)
+        self.assertEqual(self.hotel.rooms_available, 5)
+        self.assertEqual(self.hotel.name, "Test Hotel")  # Unchanged fields
+
+    def test_edit_hotel_with_file(self):
+        """Test updating a hotel with an image file."""
+        with open("./media/hotel_images/4seasonjpg.jpg", "rb") as image:
+            data = {
+                "name": "Hotel With Image",
+                "description": "Includes an image."
+            }
+            files = {"image": image}
+            response = self.client.put(
+                f"{self.edit_hotel_url}?hotel_id={self.hotel.id}",
+                data,
+                format='multipart',
+                files=files)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+            # Verify that the hotel's fields were updated
+            self.hotel.refresh_from_db()
+            self.assertEqual(self.hotel.name, "Hotel With Image")
+            self.assertEqual(self.hotel.description, "Includes an image.")
+
+    def tearDown(self):
+        self.hotel.delete()
+
+    def test_edit_hotel_partial_update_with_name(self):
+        from urllib.parse import urlencode
+        """Test partial update of a hotel's fields."""
+        data = {
+            "price": 700,
+            "rooms_available": 5
+        }
+        params = {'hotel_name': 'Test Hotel'}
+        url_with_query = f"{self.edit_hotel_url}?{urlencode(params)}"
+
+        response = self.client.put(url_with_query, data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verify that only the specified fields were updated
+        self.hotel.refresh_from_db()
+        self.assertEqual(self.hotel.price, 700)
+        self.assertEqual(self.hotel.rooms_available, 5)
+        self.assertEqual(self.hotel.name, "Test Hotel")  # Unchanged fields
