@@ -545,10 +545,5 @@ If no hotel is found matching the provided `id` or `name`, the API will return a
 ## Permissions
 - **AllowAny**: This API does not restrict access, meaning any user can delete hotels. Update the `@permission_classes` decorator if you wish to enforce authentication or specific permissions.
 
-## Notes
-- Ensure proper permissions and validation checks are implemented in production environments to prevent unauthorized deletions.
-- Deleting a hotel is permanent and cannot be undone.
-
 ---
 
-Let me know if you need further adjustments!
