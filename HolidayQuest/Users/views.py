@@ -8,6 +8,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializer import User_serializer
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from.models import User
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from Users.authentication import CookieJWTAuthentication
+
 
 
 class register_view(APIView):
@@ -58,14 +62,33 @@ class login_view(APIView):
         
         # creates a tokenpair for user(accesstoken, refreshtoken)
         refresh_token = RefreshToken.for_user(user)
+        access_token = str(refresh_token.access_token)
         
         response = Response()
+        
         response.data = {
             'message': 'Login successful.',
-            'access': str(refresh_token.access_token),  # Short-lived access token
-            'refresh': str(refresh_token),  # Long-lived refresh token
+            'access': str(access_token),
+            'refresh': str(refresh_token),
         }
-        response.set_cookie(key='jwt', value=refresh_token, httponly=True)
+        response.set_cookie(
+            key='access',
+            value=access_token,
+            httponly=True,
+            #samesite='Lax',
+            #secure=settings.DEBUG is False,  # True in production
+            max_age=3600 * 24,  # 24 hours
+            #path='/'
+        )
+        
+        response.set_cookie(
+            key='refresh',
+            value=str(refresh_token),
+            httponly=True,
+            #samesite='Lax',
+            max_age=3600 * 24 * 7,  # 7 days
+            path='/'
+        )
         
         return response
 
@@ -80,10 +103,25 @@ class logout_view(APIView):
     def post(self, request):
         response = Response({"message": "Logout successful."})
         # Delete the JWT cookie
-        response.delete_cookie('jwt')
+        response.delete_cookie('access')
+        response.delete_cookie('refresh')
         return response
 
+@method_decorator(csrf_exempt, name='dispatch')
+class ProtectedView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CookieJWTAuthentication]
     
+    def get(self, request):
+        return Response({
+            'message': 'You have access to this protected resource'
+        })
+
+
+
+
+
+
 # class CreateSuperuserView(APIView):
 #     """
 #     API endpoint to create a superuser.
