@@ -5,6 +5,8 @@ from django.db.models import Q
 from rest_framework import serializers
 from .models import Hotel, Country, City
 from django.db import models
+from Users.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class CountrySerializer(serializers.ModelSerializer):
@@ -30,14 +32,14 @@ class HotelSerializer(serializers.ModelSerializer):
     description = models.TextField()
     rooms_available = serializers.IntegerField()
     total_rooms = serializers.IntegerField()
-
+    user_id = serializers.IntegerField(required=True)
     #################################################
 
     class Meta:
         model = Hotel
         fields = [  # Include all fields, including 'image'
             'id', 'name', 'address', 'rooms_available', 'total_rooms',
-            'price', 'description', 'country', 'city', 'image'
+            'price', 'description', 'country', 'city', 'image', "user_id"
         ]
 
     def validate(self, data):
@@ -47,7 +49,7 @@ class HotelSerializer(serializers.ModelSerializer):
         address = data.get('address')
         country_name = data.get('country')
         city_name = data.get('city')
-
+        user_id = data.get("user_id")
         # Check if required fields are missing
         if not country_name:
             raise ValidationError({'country': "Country name is required."})
@@ -61,11 +63,18 @@ class HotelSerializer(serializers.ModelSerializer):
         # Retrieve or create the Country and City instances
         country, _ = Country.objects.get_or_create(name=country_name)
         city, _ = City.objects.get_or_create(name=city_name, country=country)
+        # Adjust if you are getting the user ID from a different field
+        user_id = data.get('user_id')
 
+        try:
+            created_by = User.objects.get(id=user_id)
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError(
+                "User with the given ID does not exist.")
         # Add the actual country and city objects to the validated data
         data['country'] = country
         data['city'] = city
-
+        data["created_by"] = created_by
         # Check if there is a hotel with the same name
         if Hotel.objects.filter(country=country, city=city,
                                 name=hotel_name).exists():

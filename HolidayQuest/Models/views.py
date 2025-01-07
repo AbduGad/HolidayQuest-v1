@@ -16,13 +16,14 @@ from django.http import JsonResponse
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
 def create_hotel(request):
 
     # Combine the data
     data = request.POST.dict()
     if request.FILES.get('image'):
         data['image'] = request.FILES['image']
+
+    data["user_id"] = request.user.id
 
     hotel_serializer = HotelSerializer(data=data)
 

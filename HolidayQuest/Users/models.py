@@ -5,6 +5,7 @@ from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.exceptions import ValidationError
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         '''
@@ -36,13 +37,13 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    business_account = models.BooleanField(default=False)
 
     # Assign the custom UserManager
     objects = UserManager()
@@ -58,13 +59,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     These fields are in addition to the USERNAME_FIELD, which is always required.
     '''
     REQUIRED_FIELDS = ['first_name', 'last_name']
-    
+
     def clean(self):
         '''
         Cutom clean used by the EmailField() method to print custom error message.
         '''
         if '@' not in self.email:
-            raise ValidationError({'email': 'The email must contain an "@" symbol.'})
+            raise ValidationError(
+                {'email': 'The email must contain an "@" symbol.'})
 
     def __str__(self):
         '''
