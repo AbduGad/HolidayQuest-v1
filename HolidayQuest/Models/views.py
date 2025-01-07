@@ -23,7 +23,7 @@ def create_hotel(request):
     if request.FILES.get('image'):
         data['image'] = request.FILES['image']
 
-    data["user_id"] = request.user.id
+    data["created_by"] = request.user.id
 
     hotel_serializer = HotelSerializer(data=data)
 

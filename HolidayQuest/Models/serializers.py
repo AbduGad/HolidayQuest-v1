@@ -32,14 +32,14 @@ class HotelSerializer(serializers.ModelSerializer):
     description = models.TextField()
     rooms_available = serializers.IntegerField()
     total_rooms = serializers.IntegerField()
-    user_id = serializers.IntegerField(required=True)
+    created_by = serializers.IntegerField(required=True)
     #################################################
 
     class Meta:
         model = Hotel
         fields = [  # Include all fields, including 'image'
             'id', 'name', 'address', 'rooms_available', 'total_rooms',
-            'price', 'description', 'country', 'city', 'image', "user_id"
+            'price', 'description', 'country', 'city', 'image', "created_by"
         ]
 
     def validate(self, data):
@@ -49,7 +49,8 @@ class HotelSerializer(serializers.ModelSerializer):
         address = data.get('address')
         country_name = data.get('country')
         city_name = data.get('city')
-        user_id = data.get("user_id")
+        user_id = data.pop('created_by')
+
         # Check if required fields are missing
         if not country_name:
             raise ValidationError({'country': "Country name is required."})
@@ -64,7 +65,6 @@ class HotelSerializer(serializers.ModelSerializer):
         country, _ = Country.objects.get_or_create(name=country_name)
         city, _ = City.objects.get_or_create(name=city_name, country=country)
         # Adjust if you are getting the user ID from a different field
-        user_id = data.get('user_id')
 
         try:
             created_by = User.objects.get(id=user_id)

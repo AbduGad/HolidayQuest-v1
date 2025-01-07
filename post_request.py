@@ -1,6 +1,6 @@
 import requests
 import json
-access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2MjUzNjk0LCJpYXQiOjE3MzYyNTMzOTQsImp0aSI6IjIwYTg1ZmYxYmJkYTRlNzM4ZjVmY2JhMGE0OTBiNGMwIiwidXNlcl9pZCI6NH0.5qutL6M-XqkR-UhxOfP29Qo2bMeiido0CAZ8G_8sAlI"
+access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2MjU2Mjk1LCJpYXQiOjE3MzYyNTU5OTUsImp0aSI6IjZiZDlmNzZlYjM0NTQ0NTg5NjczYTYyMTViMWJhYTI3IiwidXNlcl9pZCI6NH0.-eo52wq1A-CIJq313xIzybTxG5Qmit5FlUa-c6Az2fs"
 headers = {
     "Authorization": f"Bearer {access_token}"
     # Indicating that the data is in JSON format
@@ -28,7 +28,7 @@ print(response.content)
 url = 'http://127.0.0.1:8000/api/edit-hotel/?hotel_id=1'
 
 # Set the query parameter (hotel ID)
-refresh_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczNjMyODc0MywiaWF0IjoxNzM2MjQyMzQzLCJqdGkiOiIxYzEwZTkxYmQ0ODQ0YmQ5YjhjZWNmNmE1NTU2M2VkMSIsInVzZXJfaWQiOjN9.38N3ewCdz7mRAP21zbgJq7hSIziDS_JFo70ae0s5oxQ"
+refresh_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2MjU1NDcxLCJpYXQiOjE3MzYyNTUxNzEsImp0aSI6ImY1OTI3YWE0NTNlNDQ5Y2E4Y2UyNDQ1ODEwMTdjYmIxIiwidXNlcl9pZCI6NH0.J2Vs2O4WhT7dW4Kzf-dJLL6c4HkAoUa6VDeDBemo2VA"
 # Headers including the access token
 # data = {
 #     'name': "small hotel"
