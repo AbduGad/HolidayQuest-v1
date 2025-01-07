@@ -195,12 +195,12 @@ This API retrieves detailed information about a specific hotel by its `id` or `n
 ### Example Request
 #### By Hotel ID:
 ```plaintext
-GET http://127.0.0.1:8000/api/get-hotel-detail/?id=1
+GET http://127.0.0.1:8000/api/get-hotel/?id=1
 ```
 
 #### By Hotel Name:
 ```plaintext
-GET http://127.0.0.1:8000/api/get-hotel-detail/?name=Hotel%20D
+GET http://127.0.0.1:8000/api/get-hotel/?name=Hotel%20D
 ```
 
 ## Response
@@ -255,7 +255,7 @@ If no hotel is found matching the provided `id` or `name`, the API will return a
 
 ## Endpoint
 ```
-GET http://127.0.0.1:8000/api/get-hotels-by-location/
+GET http://127.0.0.1:8000/api/hotels/search?country=Jordan
 ```
 
 ## Description
@@ -271,7 +271,7 @@ This API retrieves a list of hotels based on location or price range filters. Us
 
 ### Example Request
 ```plaintext
-GET http://127.0.0.1:8000/api/get-hotels-by-location/?country=Egypt&city=Cairo&min_price=100&max_price=300
+GET http://127.0.0.1:8000/api/hotels/search?country=Egypt&city=luxor&min_price=50&max_price=600
 ```
 
 ## Response
@@ -400,7 +400,7 @@ PUT http://127.0.0.1:8000/api/edit-hotel/?hotel_id=1
 
 #### By Hotel Name:
 ```plaintext
-PUT http://127.0.0.1:8000/api/edit-hotel/?hotel_name=Hotel%20D
+PUT http://127.0.0.1:8000/api/edit-hotel/?name=four%20seasons
 ```
 
 #### Request Body (JSON):
@@ -509,7 +509,7 @@ DELETE http://127.0.0.1:8000/api/delete-hotel/?id=1
 
 #### By Hotel Name:
 ```plaintext
-DELETE http://127.0.0.1:8000/api/delete-hotel/?name=15%20seasons
+DELETE http://127.0.0.1:8000/api/delete-hotel/?name=four%20seasons
 ```
 
 ## Response
