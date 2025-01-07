@@ -178,7 +178,7 @@ Here’s the documentation for the `get_hotel_detail` API endpoint formatted for
 
 ## Endpoint
 ```
-GET http://127.0.0.1:8000/api/get-hotel-detail/
+GET http://127.0.0.1:8000/api/get-hotel/
 ```
 
 ## Description
