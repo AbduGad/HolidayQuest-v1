@@ -20,8 +20,8 @@ class CitySerializer(serializers.ModelSerializer):
 
 
 class HotelSerializer(serializers.ModelSerializer):
-    country = serializers.CharField(write_only=True, required=True)
-    city = serializers.CharField(write_only=True, required=True)
+    country = serializers.CharField(required=True)
+    city = serializers.CharField(required=True)
     image = serializers.ImageField(required=True)
     name = serializers.CharField(max_length=100)
     address = serializers.CharField(max_length=255)

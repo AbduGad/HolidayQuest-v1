@@ -155,7 +155,7 @@ def get_hotels_by_location(request):
             {"error": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-# http://127.0.0.1:8000/api/edit-hotel/
+# http://127.0.0.1:8000/api/edit-hotel/?name=15%20seasons
 # 'http://127.0.0.1:8000/api/edit-hotel/?hotel_id=1'
 
 
@@ -195,7 +195,8 @@ def edit_hotel(request):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-# http://127.0.0.1:8000/api/delete-hotel/
+# http://127.0.0.1:8000/api/delete-hotel/?id=0
+# http://127.0.0.1:8000/api/delete-hotel/?name=15%20seasons
 @api_view(['DELETE'])
 @permission_classes([AllowAny])
 def delete_hotel(request):
