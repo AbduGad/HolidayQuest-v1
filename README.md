@@ -1,4 +1,4 @@
-# Create Hotel API
+# 1- Create Hotel API
 
 ## Endpoint
 ```
@@ -85,7 +85,7 @@ If any of the required fields are missing or invalid, the API will return a 400 
 
 ---
 
-# Get Hotels API
+# 2- Get Hotels API
 
 ## Endpoint
 ```
