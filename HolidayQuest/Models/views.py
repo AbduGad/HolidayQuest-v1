@@ -8,6 +8,7 @@ from .serializers import EditHotelSerializer, HotelSerializer, CountrySerializer
 from HolidayQuest.forms import HotelForm
 import requests
 from django.shortcuts import get_object_or_404
+from Users.models import User
 # Allow anyone to access this view
 from django.http import JsonResponse
 
@@ -160,8 +161,10 @@ def get_hotels_by_location(request):
 
 
 @api_view(['PUT'])
-@permission_classes([AllowAny])
+# @permission_classes([AllowAny])
 def edit_hotel(request):
+    user: User = request.user
+    print("8888888888 ", user)
     # Get hotel ID and name from query parameters
     hotel_id = request.GET.get('hotel_id')
     hotel_name = request.GET.get('hotel_name')
