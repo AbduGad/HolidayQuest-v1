@@ -89,18 +89,94 @@ def get_hotel_detail(request):
             status=status.HTTP_404_NOT_FOUND
         )
 
+# http://127.0.0.1:8000/api/hotels/search?country=Jordan
 
+# http://127.0.0.1:8000/api/hotels/search?country=Egypt&city=luxor&min_price=50&max_price=600
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_hotels_by_location(request):
+    country = request.query_params.get('country')
+    city = request.query_params.get('city')
+    min_price = request.query_params.get('min_price')
+    max_price = request.query_params.get('max_price')
+
+    if not any([country, city, min_price, max_price]):
+        return Response(
+            {
+                "error": "Please provide at least one search criteria (country, city, or price range)."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    try:
+        queryset = Hotel.objects.all()
+
+        if country:
+            queryset = queryset.filter(country__name__iexact=country)
+
+        if city:
+            queryset = queryset.filter(city__name__iexact=city)
+
+        # Add price range filtering
+        if min_price:
+            try:
+                min_price = float(min_price)
+                queryset = queryset.filter(price__gte=min_price)
+            except ValueError:
+                return Response(
+                    {"error": "Invalid minimum price value."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        if max_price:
+            try:
+                max_price = float(max_price)
+                queryset = queryset.filter(price__lte=max_price)
+            except ValueError:
+                return Response(
+                    {"error": "Invalid maximum price value."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        if not queryset.exists():
+            return Response(
+                {"error": "No hotels found for the given criteria."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = HotelSerializer(
+            queryset, many=True, context={'request': request}
+        )
+        return Response(serializer.data)
+
+    except Exception as e:
+        return Response(
+            {"error": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 # http://127.0.0.1:8000/api/edit-hotel/
+# 'http://127.0.0.1:8000/api/edit-hotel/?hotel_id=1'
+
+
 @api_view(['PUT'])
 @permission_classes([AllowAny])
 def edit_hotel(request):
+    # Get hotel ID and name from query parameters
     hotel_id = request.GET.get('hotel_id')
-    if not hotel_id:
-        return JsonResponse({"detail": "Hotel ID is required."},
+    hotel_name = request.GET.get('hotel_name')
+
+    if not hotel_id and not hotel_name:
+        return JsonResponse({"detail": "Hotel ID or name is required."},
                             status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        hotel = Hotel.objects.get(id=hotel_id)
+        if hotel_id:
+            # Fetch the hotel object by ID
+            hotel = Hotel.objects.get(id=hotel_id)
+        elif hotel_name:
+            # Fetch the hotel object by name
+            hotel = Hotel.objects.get(name=hotel_name)
     except Hotel.DoesNotExist:
         return JsonResponse({"detail": "Hotel not found."},
                             status=status.HTTP_404_NOT_FOUND)
@@ -118,22 +194,27 @@ def edit_hotel(request):
         return JsonResponse(hotel_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
-# http://127.0.0.1:8000/api/Delete-hotel/
 
-
+# http://127.0.0.1:8000/api/delete-hotel/
 @api_view(['DELETE'])
 @permission_classes([AllowAny])
 def delete_hotel(request):
-    # Get hotel ID from query parameters
+    # Get hotel ID and name from query parameters
     hotel_id = request.query_params.get('id')
+    hotel_name = request.query_params.get('name')
 
-    if not hotel_id:
-        return Response({'error': 'Hotel ID is required'},
+    if not hotel_id and not hotel_name:
+        return Response({'error': 'Hotel ID or name is required'},
                         status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        # Fetch the hotel object by ID
-        hotel = Hotel.objects.get(id=hotel_id)
+        if hotel_id:
+            # Fetch the hotel object by ID
+            hotel = Hotel.objects.get(id=hotel_id)
+        elif hotel_name:
+            # Fetch the hotel object by name
+            hotel = Hotel.objects.get(name=hotel_name)
+
         hotel.delete()  # Delete the hotel from the database
         return Response({'message': 'Hotel deleted successfully'},
                         status=status.HTTP_204_NO_CONTENT)

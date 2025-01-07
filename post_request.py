@@ -20,16 +20,35 @@ import json
 # response = requests.post(url, data=data, files=files)
 # print(response.status_code)
 # print(response.json())
-url = 'http://127.0.0.1:8000/api/delete-hotel/'
+url = 'http://127.0.0.1:8000/api/edit-hotel/?hotel_id=1'
 
 # Set the query parameter (hotel ID)
-params = {'id': 21}
+params = {'name': "Grand Hotel"}
+access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2MjMxOTE4LCJpYXQiOjE3MzYyMzE2MTgsImp0aSI6ImVhN2JmMGM2ZTY2MjRhMDFhZWEyNWZlNzA2NWJhYTIyIiwidXNlcl9pZCI6M30.MYkafGhwXNkfJnBCseV3RL8qtZf00Asqp3xph64ss5k"
+refresh_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczNjMxODAxOCwiaWF0IjoxNzM2MjMxNjE4LCJqdGkiOiIxNTlkNTdjNDY4MTI0YWJiOWNjYzg5YzQ1ZGU4Zjg5OCIsInVzZXJfaWQiOjN9.FC9joj06BabbcZ05-64BYUVNeJb2BoKW--jbx4t3vMc"
+# Headers including the access token
 
-# Send the DELETE request
-response = requests.delete(url, params=params)
 
-# Print the response from the server
+def refresh_access_token():
+    response = requests.post(refresh_url, json={"refresh": refresh_token})
+    if response.status_code == 200:
+        return response.json().get("access")
+    else:
+        print(
+            f"Failed to refresh token: {response.status_code}, {response.text}")
+        return None
+
+
+headers = {
+    "Authorization": f"Bearer {access_token}",
+    "Content-Type": "application/json",  # Optional if sending JSON payload
+}
+
+# Send the PUT request with headers
+response = requests.put(url, params=params, headers=headers)
+
+# Handle the response
 if response.status_code == 204:
-    print('Hotel deleted successfully')
+    print('Hotel modified successfully')
 else:
-    print(f'Error: {response.status_code}')
+    print(f'Error: {response.status_code}, {response.text}')
