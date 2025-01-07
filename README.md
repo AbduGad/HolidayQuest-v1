@@ -543,7 +543,6 @@ If no hotel is found matching the provided `id` or `name`, the API will return a
 ```
 
 ## Permissions
-- **AllowAny**: This API does not restrict access, meaning any user can delete hotels. Update the `@permission_classes` decorator if you wish to enforce authentication or specific permissions.
-
+- **AllowAny**: 
 ---
 
