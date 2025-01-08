@@ -74,7 +74,7 @@ If the required fields are missing or invalid, the response will contain detaile
 ```
 
 ## Permissions
-- **AllowAny**: This API require authenticated users.
+- **Must Be authorized**: This API require authenticated users.
   if you are not you will get this error message
   ```json
   Authentication credentials were not provided.

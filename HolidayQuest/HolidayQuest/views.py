@@ -6,8 +6,10 @@ from .forms import HotelForm
 
 
 def create_hotel_form(request):
+    print(request)
     if request.method == 'POST':
         form = HotelForm(request.POST, request.FILES)
+        print(form.data)
         if form.is_valid():
             # Create a MultipartEncoder for proper file handling
             data = {
@@ -21,7 +23,6 @@ def create_hotel_form(request):
                 'country': form.cleaned_data['country'],
                 'city': form.cleaned_data['city'],
             }
-
             # Handle the file separately
             files = {
                 'image': (
