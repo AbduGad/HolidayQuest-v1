@@ -155,7 +155,11 @@ The response is paginated. It will return the number of results available in the
 - **results**: An array containing the hotels on the current page.
 
 ## Permissions
-- **AllowAny**: This API is accessible to all users, including unauthenticated users.
+- **AllowAny**: This API require authenticated users.
+  if you are not you will get this error message
+  ```json
+  Authentication credentials were not provided.
+  ```
 
 ## Serializer
 - **HotelSerializer**: The hotel data is serialized using the `HotelSerializer` class, ensuring that the correct format is used for each hotel in the response.
