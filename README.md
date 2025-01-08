@@ -74,7 +74,11 @@ If the required fields are missing or invalid, the response will contain detaile
 ```
 
 ## Permissions
-- **AllowAny**: This API is accessible to all users, including unauthenticated users.
+- **AllowAny**: This API require authenticated users.
+  if you are not you will get this error message
+  ```json
+  Authentication credentials were not provided.
+  ```
 
 ## Error Handling
 If any of the required fields are missing or invalid, the API will return a 400 status code with a detailed error message, specifying which fields are missing or incorrect.
@@ -155,11 +159,7 @@ The response is paginated. It will return the number of results available in the
 - **results**: An array containing the hotels on the current page.
 
 ## Permissions
-- **AllowAny**: This API require authenticated users.
-  if you are not you will get this error message
-  ```json
-  Authentication credentials were not provided.
-  ```
+- **AllowAny**: This API is accessible to all users, including unauthenticated users.
 
 ## Serializer
 - **HotelSerializer**: The hotel data is serialized using the `HotelSerializer` class, ensuring that the correct format is used for each hotel in the response.
