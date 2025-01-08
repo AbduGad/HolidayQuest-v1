@@ -54,7 +54,7 @@ class Hotel(models.Model):
     created_by = models.ForeignKey(
         User,  # Reference the User model
         on_delete=models.CASCADE,
-        related_name='hotels', default=3)
+        related_name='hotels', default=1)
 
     def __str__(self):
         return self.name

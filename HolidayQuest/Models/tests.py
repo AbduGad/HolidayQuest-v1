@@ -8,9 +8,13 @@ from rest_framework import status
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from django.urls import reverse
+from Users.models import User
+from rest_framework.authtoken.models import Token
 
 
-class CountryModelTest(TestCase):
+class CountryModelTest(
+        # TestCase
+):
     def setUp(self):
         self.country = Country.objects.create(name="Egypt")
 
@@ -40,6 +44,8 @@ class CityModelTest(TestCase):
 
 class HotelModelTest(TestCase):
     def setUp(self):
+        self.user = User.objects.create_user(email="testuser@g.com",
+                                             first_name='testuser', last_name="user", password='testpassword')
         self.country = Country.objects.create(name="Egypt")
         self.city = City.objects.create(name="Cairo", country=self.country)
         self.hotel = Hotel.objects.create(
@@ -50,7 +56,8 @@ class HotelModelTest(TestCase):
             price=100.00,
             description="A great hotel in Cairo.",
             rooms_available=10,
-            total_rooms=100
+            total_rooms=100,
+            created_by=self.user
         )
 
     def test_hotel_creation(self):
@@ -73,6 +80,21 @@ class HotelApiTest(APITestCase):
     def setUp(self):
         self.country = Country.objects.create(name='Egypt')
         self.city = City.objects.create(name='Cairo', country=self.country)
+        self.user = User.objects.create_user(email="testuser@g.com",
+                                             first_name='testuser', last_name="user", password='testpassword')
+
+        # Obtain the access token for the user
+        login_data = {
+            'email': 'testuser@g.com',
+            'password': 'testpassword'
+        }
+        login_response = self.client.post(
+            '/user/login/', data=login_data)  # Adjust URL if necessary
+        # Assuming the response contains the 'access' token
+        self.user_token = login_response.data['access']
+
+        # Add the Authorization header with the AccessToken
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.user_token)
 
         self.valid_data = {
             'name': 'Hotel A',
@@ -80,8 +102,10 @@ class HotelApiTest(APITestCase):
             'country': self.country.name,
             'city': self.city.name,
             "rooms_available": 10,
-            "total_rooms": 50, "price": 250, "description": "some text"
+            "total_rooms": 50, "price": 250, "description": "some text",
+            "created_by": self.user, "user_id": self.user.id
         }
+
         with open("./media/hotel_images/4seasonjpg.jpg", "rb") as image_file:
             image_content = image_file.read()
 
@@ -98,7 +122,6 @@ class HotelApiTest(APITestCase):
             '/api/create-hotel/',
             data=self.valid_data,
         )
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_hotel_with_missing_name(self):
@@ -182,7 +205,6 @@ class HotelApiTest(APITestCase):
             data=data_with_diff_name,
             format='multipart'
         )
-
         error_detail = response.data['non_field_errors'][0]
         error_message = str(error_detail)
 
@@ -192,12 +214,16 @@ class HotelApiTest(APITestCase):
         )
 
 
-class EditHotelEndpointTests(APITestCase):
+class EditHotelEndpointTests(
+    APITestCase
+):
     def setUp(self):
         # Create a sample hotel for testing
+        self.user = User.objects.create_user(email="testuser@g.com",
+                                             first_name='testuser', last_name="user", password='testpassword')
         self.country = Country.objects.create(name='Egypt')
-        self.city = City.objects.create(name='Cairo', country=self.country)
-
+        self.city = City.objects.create(
+            name='Cairo', country=self.country)
         self.hotel = Hotel.objects.create(
             name="Test Hotel",
             address="123 Test St.",
@@ -206,9 +232,25 @@ class EditHotelEndpointTests(APITestCase):
             rooms_available=10,
             total_rooms=20,
             country=self.country,
-            city=self.city
+            city=self.city,
+            created_by=self.user,
         )
-        # Update with the correct name if needed
+        login_data = {
+            'email': 'testuser@g.com',
+            'password': 'testpassword'
+        }
+        login_response = self.client.post('/user/login/', data=login_data)
+        if login_response.status_code == 200:
+            # Get the access token
+            self.user_token = login_response.data['access']
+        else:
+            self.fail('Failed to retrieve access token')
+
+        # Add the Authorization header with the AccessToken
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.user_token)
+
+        # Set the URL for editing the hotel (ensure this URL is correct in your
+        # project)
         self.edit_hotel_url = reverse('edit-hotel')
 
     def test_edit_hotel_successful(self):
@@ -311,6 +353,8 @@ class HotelViewTests(
 ):
 
     def setUp(self):
+        self.user = User.objects.create_user(email="testuser@g.com",
+                                             first_name='testuser', last_name="user", password='testpassword')
         # Create test image
         self.image_path = os.path.join(
             os.path.dirname(__file__),
@@ -331,6 +375,7 @@ class HotelViewTests(
         self.city2 = City.objects.create(
             name="Alexandria", country=self.country1)
         self.city3 = City.objects.create(name="Dubai", country=self.country2)
+
         self.hotel1 = Hotel.objects.create(
             name="Hotel A",
             address="123 A St.",
@@ -340,7 +385,8 @@ class HotelViewTests(
             total_rooms=50,
             country=self.country1,
             city=self.city1,
-            image=self.test_image
+            image=self.test_image,
+            created_by=self.user
         )
 
         self.hotel2 = Hotel.objects.create(
@@ -352,7 +398,8 @@ class HotelViewTests(
             total_rooms=40,
             country=self.country1,
             city=self.city1,
-            image=self.test_image
+            image=self.test_image,
+            created_by=self.user
         )
 
         self.hotel3 = Hotel.objects.create(
@@ -364,7 +411,8 @@ class HotelViewTests(
             total_rooms=60,
             country=self.country1,
             city=self.city2,
-            image=self.test_image
+            image=self.test_image,
+            created_by=self.user
         )
 
         # Update the URL to match the actual API endpoint

@@ -6,6 +6,7 @@ from rest_framework import serializers
 from .models import Hotel, Country, City
 from django.db import models
 from Users.models import User
+from Users.serializer import User_serializer
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -27,29 +28,40 @@ class HotelSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(required=True)
     name = serializers.CharField(max_length=100)
     address = serializers.CharField(max_length=255)
-    price = serializers.DecimalField(
-        max_digits=10, decimal_places=2)
+    price = serializers.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
     rooms_available = serializers.IntegerField()
     total_rooms = serializers.IntegerField()
-    created_by = serializers.IntegerField(required=True)
-    #################################################
+    # For GET requests - returns full user representation
+    # created_by = User_serializer()
+    # user_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=User.objects.all(),
+    #     required=True,
+    #     write_only=True,
+    #     source='created_by'
+    # )
 
     class Meta:
         model = Hotel
-        fields = [  # Include all fields, including 'image'
+        fields = [
             'id', 'name', 'address', 'rooms_available', 'total_rooms',
-            'price', 'description', 'country', 'city', 'image', "created_by"
+            'price', 'description', 'country', 'city', 'image',
+            # "user_id"
         ]
 
+    def create(self, validated_data):
+        user = self.context['request'].user
+        hotel = Hotel.objects.create(
+            created_by=user,
+            **validated_data
+        )
+        return hotel
+
     def validate(self, data):
-        # Extract the name, address, country_name, and city_name from the
-        # validated data
         hotel_name = data.get('name')
         address = data.get('address')
         country_name = data.get('country')
         city_name = data.get('city')
-        user_id = data.pop('created_by')
 
         # Check if required fields are missing
         if not country_name:
@@ -64,17 +76,11 @@ class HotelSerializer(serializers.ModelSerializer):
         # Retrieve or create the Country and City instances
         country, _ = Country.objects.get_or_create(name=country_name)
         city, _ = City.objects.get_or_create(name=city_name, country=country)
-        # Adjust if you are getting the user ID from a different field
 
-        try:
-            created_by = User.objects.get(id=user_id)
-        except ObjectDoesNotExist:
-            raise serializers.ValidationError(
-                "User with the given ID does not exist.")
         # Add the actual country and city objects to the validated data
         data['country'] = country
         data['city'] = city
-        data["created_by"] = created_by
+
         # Check if there is a hotel with the same name
         if Hotel.objects.filter(country=country, city=city,
                                 name=hotel_name).exists():
@@ -87,18 +93,7 @@ class HotelSerializer(serializers.ModelSerializer):
             raise ValidationError(
                 {'non_field_errors': "A hotel with the same address already exists"})
 
-        # Return the validated data if no validation errors occurred
         return data
-
-    def create(self, validated_data):
-        # Extract country and city from validated_data
-        country = validated_data.pop('country')
-        city = validated_data.pop('city')
-
-        # Create the hotel instance with the foreign keys
-        hotel = Hotel.objects.create(
-            country=country, city=city, **validated_data)
-        return hotel
 
 
 class EditHotelSerializer(serializers.ModelSerializer):
@@ -139,6 +134,14 @@ class EditHotelSerializer(serializers.ModelSerializer):
         data['city'] = city
 
         return data
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        hotel = Hotel.objects.create(
+            created_by=user,
+            **validated_data
+        )
+        return hotel
 
     def update(self, instance, validated_data):
         # Handle country and city updates
