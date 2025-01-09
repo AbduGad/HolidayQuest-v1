@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit/Delete Hotel</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        width: 60%;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        font-size: 16px;
+        margin-bottom: 5px;
+        color: #555;
+      }
+      input[type='text'],
+      input[type='number'],
+      input[type='file'],
+      input[type='submit'],
+      input[type='email'],
+      input[type='password'],
+      textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      textarea {
+        height: 100px;
+      }
+      .btn-container {
+        text-align: center;
+      }
+      .btn-container button {
+        padding: 10px 20px;
+        margin: 10px 5px;
+        border: none;
+        background-color: #4caf50;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      .btn-container button.delete {
+        background-color: #f44336;
+      }
+      .btn-container button:hover {
+        opacity: 0.8;
+      }
+      .error-message {
+        color: red;
+        font-size: 14px;
+        text-align: center;
+        margin: 10px 0;
+      }
+      .success-message {
+        color: green;
+        font-size: 14px;
+        text-align: center;
+        margin: 10px 0;
+      }
+      #login-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      #login-modal {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        width: 300px;
+        text-align: center;
+      }
+      #login-modal input {
+        margin-bottom: 10px;
+      }
+      #login-modal button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      #login-modal button:hover {
+        opacity: 0.8;
+      }
+      #login-error {
+        color: #f44336;
+        margin: 10px 0;
+        font-size: 14px;
+        display: none;
+      }
+      #response-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      #response-modal {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        width: 300px;
+        text-align: center;
+      }
+      #response-modal .message {
+        margin-bottom: 20px;
+        word-break: break-word;
+      }
+      #response-modal .success {
+        color: #4caf50;
+      }
+      #response-modal .error {
+        color: #f44336;
+      }
+      #response-modal button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      #response-modal button:hover {
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Response Overlay -->
+    <div id="response-overlay">
+      <div id="response-modal">
+        <div id="response-message" class="message"></div>
+        <button onclick="closeResponseOverlay()">Close</button>
+      </div>
+    </div>
+
+    <!-- Login Overlay -->
+    <div id="login-overlay">
+      <div id="login-modal">
+        <h3>Login</h3>
+        <div id="login-error"></div>
+        <input type="email" id="email" placeholder="Enter your email" />
+        <input
+          type="password"
+          id="password"
+          placeholder="Enter your password"
+        />
+        <button onclick="loginUser()">Login</button>
+      </div>
+    </div>
+
+    <div class="container">
+      <h1>Edit/Delete Hotel</h1>
+      <form id="hotel-form">
+        <div class="form-group">
+          <label for="hotel_id">Hotel ID (optional):</label>
+          <input
+            type="number"
+            id="hotel_id"
+            name="hotel_id"
+            placeholder="Enter Hotel ID"
+          />
+        </div>
+        <div class="form-group">
+          <label for="hotel_name">Hotel Name (optional):</label>
+          <input
+            type="text"
+            id="hotel_name"
+            name="hotel_name"
+            placeholder="Enter Hotel Name"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="name">Updated Hotel Name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Enter Updated Hotel Name"
+          />
+        </div>
+        <div class="form-group">
+          <label for="address">Updated Address:</label>
+          <input
+            type="text"
+            id="address"
+            name="address"
+            placeholder="Enter Updated Address"
+          />
+        </div>
+        <div class="form-group">
+          <label for="price">Updated Price per Night:</label>
+          <input
+            type="number"
+            id="price"
+            name="price"
+            placeholder="Enter Updated Price"
+            step="0.01"
+          />
+        </div>
+        <div class="form-group">
+          <label for="description">Updated Description:</label>
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Enter Updated Description"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="rooms_available">Updated Rooms Available:</label>
+          <input
+            type="number"
+            id="rooms_available"
+            name="rooms_available"
+            placeholder="Enter Updated Rooms Available"
+          />
+        </div>
+        <div class="form-group">
+          <label for="image">Updated Image:</label>
+          <input type="file" id="image" name="image" />
+        </div>
+
+        <div class="btn-container">
+          <button type="submit">Update Hotel</button>
+          <button type="button" class="delete" onclick="deleteHotel()">
+            Delete Hotel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      // Cookie management functions
+      function setCookie(name, value, days) {
+        const expires = new Date();
+        expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+      }
+
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+      }
+
+      function deleteCookie(name) {
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+      }
+
+      function showResponseOverlay(message, isError = false) {
+        const responseMessage = document.getElementById('response-message');
+        responseMessage.textContent = message;
+        responseMessage.className = `message ${isError ? 'error' : 'success'}`;
+        document.getElementById('response-overlay').style.display = 'flex';
+      }
+
+      function closeResponseOverlay() {
+        document.getElementById('response-overlay').style.display = 'none';
+      }
+
+      function showLoginOverlay() {
+        document.getElementById('login-overlay').style.display = 'flex';
+      }
+
+      function showLoginError(message) {
+        const loginError = document.getElementById('login-error');
+        loginError.textContent = message;
+        loginError.style.display = 'block';
+      }
+
+      function clearLoginError() {
+        const loginError = document.getElementById('login-error');
+        loginError.style.display = 'none';
+      }
+
+      function loginUser() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        clearLoginError();
+
+        if (!email || !password) {
+          showLoginError('Email and password are required.');
+          return;
+        }
+
+        console.log('Attempting login...'); // Debug line
+
+        fetch('http://127.0.0.1:8000/user/login/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        })
+          .then(async (response) => {
+            const data = await response.json();
+            console.log('Login response:', data); // Debug line
+            if (data.access) {
+              setCookie('access_token', data.access, 7);
+              document.getElementById('login-overlay').style.display = 'none';
+              showResponseOverlay('Successfully logged in');
+            } else {
+              throw new Error(data.detail || 'Invalid email or password');
+            }
+          })
+          .catch((error) => {
+            console.error('Login error:', error); // Debug line
+            showLoginError(error.message);
+          });
+      }
+
+      function deleteHotel() {
+        const hotelId = document.getElementById('hotel_id').value;
+        const hotelName = document.getElementById('hotel_name').value;
+        const token = getCookie('access_token');
+
+        console.log('Delete Request Token:', token); // Debug line
+
+        if (!token) {
+          showResponseOverlay('Not authenticated. Please log in.', true);
+          showLoginOverlay();
+          return;
+        }
+
+        if (!hotelId && !hotelName) {
+          showResponseOverlay('Hotel ID or Name is required to delete.', true);
+          return;
+        }
+
+        const queryParams = new URLSearchParams();
+        if (hotelId) queryParams.append('hotel_id', hotelId);
+        if (hotelName) queryParams.append('hotel_name', hotelName);
+
+        fetch(
+          `http://127.0.0.1:8000/api/delete-hotel/?${queryParams.toString()}`,
+          {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+          .then(async (response) => {
+            console.log('Delete response status:', response.status); // Debug line
+            if (response.status === 401) {
+              showLoginOverlay();
+              throw new Error('Authentication expired. Please log in again.');
+            }
+            if (response.status === 204) {
+              showResponseOverlay('Hotel deleted successfully');
+              document.getElementById('hotel-form').reset();
+            } else {
+              const data = await response.json();
+              throw new Error(
+                data.error || data.detail || 'Failed to delete hotel'
+              );
+            }
+          })
+          .catch((error) => {
+            console.error('Delete error:', error); // Debug line
+            showResponseOverlay(error.message, true);
+          });
+      }
+
+      document
+        .getElementById('hotel-form')
+        .addEventListener('submit', function (event) {
+          event.preventDefault();
+          const token = getCookie('access_token');
+
+          console.log('Update Request Token:', token); // Debug line
+
+          if (!token) {
+            showResponseOverlay('Not authenticated. Please log in.', true);
+            showLoginOverlay();
+            return;
+          }
+
+          const hotelId = document.getElementById('hotel_id').value.trim();
+          const hotelName = document.getElementById('hotel_name').value.trim();
+
+          if (!hotelId && !hotelName) {
+            showResponseOverlay(
+              'Hotel ID or Name is required to update.',
+              true
+            );
+            return;
+          }
+
+          const formData = new FormData();
+
+          const fields = {
+            name: document.getElementById('name').value.trim(),
+            address: document.getElementById('address').value.trim(),
+            price: document.getElementById('price').value.trim(),
+            description: document.getElementById('description').value.trim(),
+            rooms_available: document
+              .getElementById('rooms_available')
+              .value.trim(),
+            image: document.getElementById('image').files[0]
+          };
+
+          Object.entries(fields).forEach(([key, value]) => {
+            if (value) {
+              formData.append(key, value);
+            }
+          });
+
+          const queryParams = new URLSearchParams();
+          if (hotelId) queryParams.append('hotel_id', hotelId);
+          if (hotelName) queryParams.append('hotel_name', hotelName);
+          console.log(`tokennn ==== ${token}`);
+          fetch(
+            `http://127.0.0.1:8000/api/edit-hotel/?${queryParams.toString()}`,
+            {
+              method: 'PUT',
+              headers: {
+                Authorization: `Bearer ${token}`
+              },
+              body: formData
+            }
+          )
+            .then(async (response) => {
+              console.log('Update response status:', response.status); // Debug line
+              if (response.status === 401) {
+                showLoginOverlay();
+                throw new Error('Authentication expired. Please log in again.');
+              }
+              const data = await response.json();
+              if (!response.ok) {
+                throw new Error(
+                  data.detail || data.error || 'Failed to update hotel'
+                );
+              }
+              showResponseOverlay(data.message || 'Hotel updated successfully');
+              this.reset();
+            })
+            .catch((error) => {
+              console.error('Update error:', error); // Debug line
+              showResponseOverlay(error.message, true);
+            });
+        });
+
+      window.onload = function () {
+        const accessToken = getCookie('access_token');
+        if (!accessToken) {
+          showLoginOverlay();
+        }
+      };
+    </script>
+  </body>
+</html>
