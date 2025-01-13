@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    "Api_forms",
     "rest_framework",
     'Users',
     'Models',
@@ -70,10 +71,10 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     'http://127.0.0.1:8000',
-    ]
-#CORS_ALLOW_ALL_ORIGINS = True # Remove later (testing purposes)
+]
+# CORS_ALLOW_ALL_ORIGINS = True # Remove later (testing purposes)
 CSRF_COOKIE_SAMESITE = 'Lax'  # Must match cookie samesite setting
-#CSRF_COOKIE_SECURE = not DEBUG  # Should be True in production
+# CSRF_COOKIE_SECURE = not DEBUG  # Should be True in production
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
@@ -94,7 +95,10 @@ ROOT_URLCONF = 'HolidayQuest.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'HolidayQuest' / 'templates'],
+        'DIRS': [BASE_DIR / 'HolidayQuest' / 'templates',
+                 BASE_DIR / 'HolidayQuest' / 'Api_forms' /
+                 'templates',  # App-specific templates
+                 ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

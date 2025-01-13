@@ -241,7 +241,7 @@
 
       // Function to check authentication status
       function checkAuth() {
-        const token = getCookie('access_token');
+        const token = getCookie('access');
         const userControls = document.getElementById('user-controls');
 
         if (token) {
@@ -280,7 +280,7 @@
       // Function to handle logout
       async function handleLogout() {
         try {
-          const token = getCookie('access_token');
+          const token = getCookie('access');
           const response = await fetch('http://127.0.0.1:8000/user/logout/', {
             method: 'POST',
             headers: {
@@ -289,7 +289,7 @@
           });
 
           if (response.ok) {
-            deleteCookie('access_token');
+            deleteCookie('access');
             checkAuth();
           } else {
             showOverlay('error', 'Logout failed');
@@ -355,7 +355,7 @@
             const data = await response.json();
 
             if (response.ok) {
-              setCookie('access_token', data.access, 7); // Store token for 7 days
+              setCookie('access', data.access, 7); // Store token for 7 days
               checkAuth();
               showOverlay('success', 'Login successful!');
             } else {
@@ -368,7 +368,7 @@
 
         hotelForm.addEventListener('submit', async (e) => {
           e.preventDefault();
-          const token = getCookie('access_token');
+          const token = getCookie('access');
 
           if (!token) {
             showLoginOverlay();

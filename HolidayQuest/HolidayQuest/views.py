@@ -9,7 +9,6 @@ def create_hotel_form(request):
     print(request)
     if request.method == 'POST':
         form = HotelForm(request.POST, request.FILES)
-        print(form.data)
         if form.is_valid():
             # Create a MultipartEncoder for proper file handling
             data = {

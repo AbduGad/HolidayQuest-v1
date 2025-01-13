@@ -164,17 +164,23 @@ def get_hotels_by_location(request):
 def edit_hotel(request):
     user: User = request.user
     # Get hotel ID and name from query parameters
+    print("5555 ", request.data)
+    print("5555 ", request.GET)
+
     hotel_id = request.GET.get('hotel_id')
     hotel_name = request.GET.get('hotel_name')
 
+    print("hotel_id :", hotel_id, "hotel_name: ", hotel_name)
     if not hotel_id and not hotel_name:
         return JsonResponse({"detail": "Hotel ID or name is required."},
                             status=status.HTTP_400_BAD_REQUEST)
 
     try:
+
         if hotel_id:
             # Fetch the hotel object by ID
             hotel = Hotel.objects.get(id=hotel_id)
+
         elif hotel_name:
             # Fetch the hotel object by name
             hotel = Hotel.objects.get(name=hotel_name)
@@ -190,10 +196,13 @@ def edit_hotel(request):
         data['image'] = request.FILES['image']
 
     hotel_serializer = EditHotelSerializer(hotel, data=data, partial=True)
+
     if hotel_serializer.is_valid():
         hotel_serializer.save()
         return JsonResponse(hotel_serializer.data, status=status.HTTP_200_OK)
     else:
+        print("---------------------------")
+
         return JsonResponse(hotel_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
