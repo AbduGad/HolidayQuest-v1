@@ -22,6 +22,10 @@
             <label class="form-label" for="password">Password</label>
             <input type="password" id="password" name="password" class="form-input" required>
         </div>
+        <div class="form-group">
+            <label class="form-label" for="business">Are you registering as a business?</label>
+            <input type="checkbox" id="business" name="business" value="true">
+        </div>
         <button type="submit" class="btn">Register</button>
         <div class="form-footer">
             Already have an account? <a href="{% url 'login' %}">Login</a>
@@ -39,6 +43,7 @@
         const password = document.getElementById('password').value;
         const first_name = document.getElementById('first_name').value;
         const last_name = document.getElementById('last_name').value;
+        const business = document.getElementById('business').checked;
 
         try {
             console.log('hi1');
@@ -47,7 +52,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password, first_name, last_name }),
+                body: JSON.stringify({ email, password, first_name, last_name, business }),
             });
 
             if (!response.ok) {
