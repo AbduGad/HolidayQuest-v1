@@ -23,7 +23,7 @@ class User_serializer(serializers.ModelSerializer):
         Use the custom UserManager to create a user.
         """
         first_name = validated_data.get('first_name')
-        last_name = validated_data.get('last_name')  # Make sure this is accessed safely
+        last_name = validated_data.get('last_name')
         email = validated_data.get('email')
         password = validated_data.get('password')
 
