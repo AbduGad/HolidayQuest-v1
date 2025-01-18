@@ -10,6 +10,8 @@ class User_serializer(serializers.ModelSerializer):
     """
     # stops the password from appearing in the http response
     password = serializers.CharField(write_only=True)
+    business = serializers.BooleanField(default=False)
+
 
     class Meta:
         """
@@ -21,7 +23,8 @@ class User_serializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'email',
-            'password']
+            'password',
+            'business']
 
     def create(self, validated_data):
         """
@@ -31,13 +34,15 @@ class User_serializer(serializers.ModelSerializer):
         last_name = validated_data.get('last_name')
         email = validated_data.get('email')
         password = validated_data.get('password')
+        isbusiness = validated_data.get('business', False)
 
         if not first_name or not last_name or not email or not password:
-            raise serializers.ValidationError("All fields are required.")
+            raise serializers.ValidationError("All fields are requiredd.")
 
         return User.objects.create_user(
             email=validated_data['email'],
             password=validated_data['password'],
             first_name=validated_data['first_name'],
-            last_name=validated_data['last_name']
+            last_name=validated_data['last_name'],
+            business_account=isbusiness
         )
