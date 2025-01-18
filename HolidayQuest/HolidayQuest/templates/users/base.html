@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HolidayQuest{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(45deg, #6b21a8, #3b82f6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-title {
+            color: #1e293b;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .success-message {
+            color: #16a34a;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .form-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: #475569;
+        }
+
+        .form-footer a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    {% block content %}{% endblock %}
+</body>
+</html>
