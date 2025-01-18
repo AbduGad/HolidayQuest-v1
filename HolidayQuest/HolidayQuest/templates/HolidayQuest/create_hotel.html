@@ -9,6 +9,37 @@
         padding: 0;
         background-color: #f4f4f9;
       }
+      header {
+        background-color: #333;
+        color: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      header .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      header .logout-btn {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 1em;
+        text-transform: uppercase;
+        transition: background-color 0.3s;
+      }
+      header .logout-btn:hover {
+        background-color: #45a049;
+      }
+      header .username {
+        font-size: 1.1em;
+        font-weight: bold;
+      }
       h1 {
         text-align: center;
         margin-top: 30px;
@@ -56,15 +87,62 @@
       button:hover {
         background-color: #45a049;
       }
-      .error-message {
-        color: red;
-        margin-top: 10px;
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0.3s, opacity 0.3s;
+      }
+      .overlay.active {
+        visibility: visible;
+        opacity: 1;
+      }
+      .modal {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 400px;
+        width: 100%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+      .modal h2 {
+        margin-top: 0;
+      }
+      .close-btn {
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 10px;
+        margin-top: 15px;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 1em;
+      }
+      .close-btn:hover {
+        background-color: darkred;
       }
     </style>
   </head>
   <body>
-    <h1>Create a New Hotel</h1>
-    <form method="POST" enctype="multipart/form-data">
+    <header>
+      <h1>Create Hotel</h1>
+      <div class="user-info">
+        <div id="user-controls">
+          <!-- This will be populated by JavaScript -->
+        </div>
+      </div>
+    </header>
+
+    <form method="POST" enctype="multipart/form-data" id="hotel-form">
       {% csrf_token %}
       <div class="form-group">
         <label for="{{ form.name.id_for_label }}">Hotel Name:</label>
@@ -106,5 +184,225 @@
       </div>
       <button type="submit">Submit</button>
     </form>
+
+    <!-- Overlays -->
+    <div class="overlay" id="error-overlay">
+      <div class="modal">
+        <h2>Error</h2>
+        <p id="error-message"></p>
+        <button class="close-btn" id="error-close-btn">Close</button>
+      </div>
+    </div>
+
+    <div class="overlay" id="success-overlay">
+      <div class="modal">
+        <h2>Success</h2>
+        <p id="success-message"></p>
+        <button class="close-btn" id="success-close-btn">Close</button>
+      </div>
+    </div>
+
+    <div class="overlay" id="login-overlay">
+      <div class="modal">
+        <h2>Please Log In</h2>
+        <p>You need to log in to create a hotel.</p>
+        <form id="login-form">
+          <input type="email" name="email" placeholder="Email" required />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+          />
+          <button type="submit">Login</button>
+        </form>
+        <button class="close-btn" onclick="closeLoginOverlay()">Close</button>
+      </div>
+    </div>
+
+    <script>
+      // Helper functions for cookie management
+      function setCookie(name, value, days) {
+        const expires = new Date();
+        expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+      }
+
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+      }
+
+      function deleteCookie(name) {
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+      }
+
+      // Function to check authentication status
+      function checkAuth() {
+        const token = getCookie('access');
+        const userControls = document.getElementById('user-controls');
+
+        if (token) {
+          userControls.innerHTML = `
+            <button onclick="handleLogout()" class="logout-btn">Logout</button>
+          `;
+          closeLoginOverlay();
+        } else {
+          userControls.innerHTML = `
+            <button onclick="showLoginOverlay()" class="logout-btn">Login</button>
+          `;
+          showLoginOverlay();
+        }
+      }
+
+      // Function to close overlay
+      function closeOverlay(overlayId) {
+        const overlay = document.getElementById(overlayId);
+        if (overlay) {
+          overlay.classList.remove('active');
+        }
+      }
+
+      // Function to show login overlay
+      function showLoginOverlay() {
+        const loginOverlay = document.getElementById('login-overlay');
+        loginOverlay.classList.add('active');
+      }
+
+      // Function to close login overlay
+      function closeLoginOverlay() {
+        const loginOverlay = document.getElementById('login-overlay');
+        loginOverlay.classList.remove('active');
+      }
+
+      // Function to handle logout
+      async function handleLogout() {
+        try {
+          const token = getCookie('access');
+          const response = await fetch('http://127.0.0.1:8000/user/logout/', {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+
+          if (response.ok) {
+            deleteCookie('access');
+            checkAuth();
+          } else {
+            showOverlay('error', 'Logout failed');
+          }
+        } catch (error) {
+          showOverlay('error', 'Logout failed');
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        const hotelForm = document.getElementById('hotel-form');
+        const loginForm = document.getElementById('login-form');
+        const errorOverlay = document.getElementById('error-overlay');
+        const successOverlay = document.getElementById('success-overlay');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+
+        // Check authentication status on page load
+        checkAuth();
+
+        // Add event listeners for close buttons
+        document
+          .getElementById('error-close-btn')
+          .addEventListener('click', () => {
+            closeOverlay('error-overlay');
+          });
+
+        document
+          .getElementById('success-close-btn')
+          .addEventListener('click', () => {
+            closeOverlay('success-overlay');
+          });
+
+        // Function to show overlay
+        function showOverlay(overlay, message) {
+          if (overlay === 'error') {
+            errorMessage.textContent = message;
+            errorOverlay.classList.add('active');
+          } else if (overlay === 'success') {
+            successMessage.textContent = message;
+            successOverlay.classList.add('active');
+          }
+        }
+
+        // Login form submission handler
+        loginForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const formData = new FormData(loginForm);
+          const loginData = {
+            email: formData.get('email'),
+            password: formData.get('password')
+          };
+
+          try {
+            const response = await fetch('http://127.0.0.1:8000/user/login/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(loginData)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              setCookie('access', data.access, 7); // Store token for 7 days
+              checkAuth();
+              showOverlay('success', 'Login successful!');
+            } else {
+              showOverlay('error', data.message || 'Login failed');
+            }
+          } catch (error) {
+            showOverlay('error', 'Login failed');
+          }
+        });
+
+        hotelForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const token = getCookie('access');
+
+          if (!token) {
+            showLoginOverlay();
+            return;
+          }
+
+          const formData = new FormData(hotelForm);
+
+          try {
+            const response = await fetch(
+              'http://127.0.0.1:8000/api/create-hotel/',
+              {
+                method: 'POST',
+                headers: {
+                  Authorization: `Bearer ${token}`
+                },
+                body: formData
+              }
+            );
+
+            const responseData = await response.json();
+
+            if (response.status === 201) {
+              showOverlay('success', 'Hotel created successfully!');
+            } else {
+              // Access specific error message from response data
+              const errorMessage = responseData;
+              showOverlay('error', Object.entries(errorMessage));
+            }
+          } catch (error) {
+            showOverlay('error', 'Something went wrong. Please try again.');
+          }
+        });
+      });
+    </script>
   </body>
 </html>

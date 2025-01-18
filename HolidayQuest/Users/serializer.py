@@ -10,14 +10,19 @@ class User_serializer(serializers.ModelSerializer):
     """
     # stops the password from appearing in the http response
     password = serializers.CharField(write_only=True)
-    
+
     class Meta:
         """
         Meta class for User_serializer to define its model and fields that it will work on
         """
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'password']
-        
+        fields = [
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'password']
+
     def create(self, validated_data):
         """
         Use the custom UserManager to create a user.
@@ -29,11 +34,10 @@ class User_serializer(serializers.ModelSerializer):
 
         if not first_name or not last_name or not email or not password:
             raise serializers.ValidationError("All fields are required.")
-        
+
         return User.objects.create_user(
             email=validated_data['email'],
             password=validated_data['password'],
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name']
         )
-        

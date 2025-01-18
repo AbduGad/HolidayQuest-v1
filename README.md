@@ -74,10 +74,11 @@ If the required fields are missing or invalid, the response will contain detaile
 ```
 
 ## Permissions
-- **AllowAny**: This API is accessible to all users, including unauthenticated users.
-
-## Serializer
-- **HotelSerializer**: The data is validated using the `HotelSerializer` class, which ensures that all fields are correctly formatted and required fields are present.
+- **Must Be authorized**: This API require authenticated users.
+  if you are not you will get this error message
+  ```json
+  Authentication credentials were not provided.
+  ```
 
 ## Error Handling
 If any of the required fields are missing or invalid, the API will return a 400 status code with a detailed error message, specifying which fields are missing or incorrect.
@@ -167,11 +168,6 @@ The response is paginated. It will return the number of results available in the
 If there is an error with the request or pagination, the API will return a 400 status code with an error message explaining the issue.
 
 
-Here’s the documentation formatted for the `README` file:
-
----
-Here’s the documentation for the `get_hotel_detail` API endpoint formatted for a `README` file:
-
 ---
 
 # 3- Get Hotel Details API
@@ -190,7 +186,7 @@ This API retrieves detailed information about a specific hotel by its `id` or `n
 - **id** (integer, optional): The unique ID of the hotel to retrieve.
 - **name** (string, optional): The name of the hotel to retrieve.
 
-> **Note**: At least one of `id` or `name` is required.
+> **Note**: At least one of `id` or `hotel_name` is required.
 
 ### Example Request
 #### By Hotel ID:
@@ -200,7 +196,7 @@ GET http://127.0.0.1:8000/api/get-hotel/?id=1
 
 #### By Hotel Name:
 ```plaintext
-GET http://127.0.0.1:8000/api/get-hotel/?name=Hotel%20D
+GET http://127.0.0.1:8000/api/get-hotel/?hotel_name=Hotel%20D
 ```
 
 ## Response
@@ -357,8 +353,7 @@ If there is an unexpected error, the API will return a generic error message.
 ## Serializer
 - **HotelSerializer**: The hotel data is serialized using the `HotelSerializer` class, ensuring a consistent format in the response.
 
----
-Here’s the documentation for the `edit_hotel` API endpoint formatted for a `README` file:
+
 
 ---
 
@@ -468,18 +463,22 @@ If any validation error occurs (e.g., invalid data types, invalid field values),
 ```
 
 ## Permissions
-- 
+- You must be authorized to modify hotel details.  
+  If not, you will receive the following error:  
+  ```json
+  status code 401 {"detail": "Authentication credentials were not provided."}
+  ```
 
-## Serializer
-- **EditHotelSerializer**: The data is validated and updated using the `EditHotelSerializer`.
+- Additionally, you must be the creator of the hotel to modify its details.  
+  Otherwise, you will receive this error message:  
+  ```json
+  status code 403 {"detail": "You are not authorized to modify this hotel."}
+  ```
+
 
 ## Notes
 - If the `image` field is included, it must be sent as a file in a multipart/form-data request.
 - Only the fields provided in the body will be updated. Unprovided fields will retain their existing values.
-
----
-
-Here’s the documentation for the `delete_hotel` API endpoint formatted for a `README` file:
 
 ---
 
@@ -491,7 +490,7 @@ DELETE http://127.0.0.1:8000/api/delete-hotel/
 ```
 
 ## Description
-This API allows users to delete a hotel by specifying either its `id` or `name`. If the hotel is found, it is removed from the database.
+This API allows users to delete a hotel by specifying either its `hotel_id` or `hotel_name`. If the hotel is found, it is removed from the database.
 
 ## Request Parameters
 
@@ -499,7 +498,7 @@ This API allows users to delete a hotel by specifying either its `id` or `name`.
 - **id** (integer, optional): The unique ID of the hotel to delete.
 - **name** (string, optional): The name of the hotel to delete.
 
-> **Note**: At least one of `id` or `name` is required.
+> **Note**: At least one of `hotel_id` or `hotel_name` is required.
 
 ### Example Request
 #### By Hotel ID:
@@ -527,7 +526,7 @@ The hotel was successfully deleted from the database. No response body is return
 ### Error Responses
 
 #### Missing Hotel Identifier (HTTP 400 Bad Request)
-If neither `id` nor `name` is provided, the API will return an error.
+If neither `hotel_id` nor `hotel_name` is provided, the API will return an error.
 ```json
 {
   "error": "Hotel ID or name is required"
@@ -543,6 +542,16 @@ If no hotel is found matching the provided `id` or `name`, the API will return a
 ```
 
 ## Permissions
-- **AllowAny**: 
+- You must be authorized to delete a hotel.  
+  If not, you will receive the following error:  
+  ```json
+  status code 401 {"detail": "Authentication credentials were not provided."}
+  ```
+
+- Additionally, you must be the creator of the hotel to delete it.  
+  Otherwise, you will receive this error message:  
+  ```json
+  status code 403 {"detail": "You are not authorized to Delete this hotel."}
+  ```
 ---
 

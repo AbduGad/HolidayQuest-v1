@@ -16,19 +16,18 @@ from django.http import JsonResponse
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
 def create_hotel(request):
 
-    # Combine the data
     data = request.POST.dict()
     if request.FILES.get('image'):
         data['image'] = request.FILES['image']
 
-    hotel_serializer = HotelSerializer(data=data)
+    hotel_serializer = HotelSerializer(data=data, context={'request': request})
 
     if hotel_serializer.is_valid():
         hotel_serializer.save()
-        return Response(hotel_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(hotel_serializer.data,
+                        status=status.HTTP_201_CREATED)
     else:
         return Response(hotel_serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
@@ -68,7 +67,7 @@ def get_hotels(request):
 @permission_classes([AllowAny])
 def get_hotel_detail(request):
     hotel_id = request.query_params.get('id')
-    hotel_name = request.query_params.get('name')
+    hotel_name = request.query_params.get('hotel_name')
 
     try:
         if hotel_id:
@@ -164,19 +163,24 @@ def get_hotels_by_location(request):
 # @permission_classes([AllowAny])
 def edit_hotel(request):
     user: User = request.user
-    print("8888888888 ", user)
     # Get hotel ID and name from query parameters
+    print("5555 ", request.data)
+    print("5555 ", request.GET)
+
     hotel_id = request.GET.get('hotel_id')
     hotel_name = request.GET.get('hotel_name')
 
+    print("hotel_id :", hotel_id, "hotel_name: ", hotel_name)
     if not hotel_id and not hotel_name:
         return JsonResponse({"detail": "Hotel ID or name is required."},
                             status=status.HTTP_400_BAD_REQUEST)
 
     try:
+
         if hotel_id:
             # Fetch the hotel object by ID
             hotel = Hotel.objects.get(id=hotel_id)
+
         elif hotel_name:
             # Fetch the hotel object by name
             hotel = Hotel.objects.get(name=hotel_name)
@@ -184,16 +188,21 @@ def edit_hotel(request):
         return JsonResponse({"detail": "Hotel not found."},
                             status=status.HTTP_404_NOT_FOUND)
 
-    # Prepare the data
+    if hotel.created_by != user:
+        return JsonResponse({"detail": "You are not authorized to modify this hotel."},
+                            status=status.HTTP_403_FORBIDDEN)
     data = request.data.copy()
     if request.FILES.get('image'):
         data['image'] = request.FILES['image']
 
     hotel_serializer = EditHotelSerializer(hotel, data=data, partial=True)
+
     if hotel_serializer.is_valid():
         hotel_serializer.save()
         return JsonResponse(hotel_serializer.data, status=status.HTTP_200_OK)
     else:
+        print("---------------------------")
+
         return JsonResponse(hotel_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
@@ -201,11 +210,11 @@ def edit_hotel(request):
 # http://127.0.0.1:8000/api/delete-hotel/?id=0
 # http://127.0.0.1:8000/api/delete-hotel/?name=15%20seasons
 @api_view(['DELETE'])
-@permission_classes([AllowAny])
 def delete_hotel(request):
     # Get hotel ID and name from query parameters
-    hotel_id = request.query_params.get('id')
-    hotel_name = request.query_params.get('name')
+    hotel_id = request.query_params.get('hotel_id')
+    hotel_name = request.query_params.get('hotel_name')
+    user: User = request.user
 
     if not hotel_id and not hotel_name:
         return Response({'error': 'Hotel ID or name is required'},
@@ -218,6 +227,9 @@ def delete_hotel(request):
         elif hotel_name:
             # Fetch the hotel object by name
             hotel = Hotel.objects.get(name=hotel_name)
+        if hotel.created_by != user:
+            return JsonResponse({"detail": "You are not authorized to Delete this hotel."},
+                                status=status.HTTP_403_FORBIDDEN)
 
         hotel.delete()  # Delete the hotel from the database
         return Response({'message': 'Hotel deleted successfully'},

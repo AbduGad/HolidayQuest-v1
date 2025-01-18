@@ -8,6 +8,7 @@ from rest_framework.permissions import AllowAny
 
 
 def create_hotel_form(request):
+    print(request)
     if request.method == 'POST':
         form = HotelForm(request.POST, request.FILES)
         if form.is_valid():
@@ -23,7 +24,6 @@ def create_hotel_form(request):
                 'country': form.cleaned_data['country'],
                 'city': form.cleaned_data['city'],
             }
-
             # Handle the file separately
             files = {
                 'image': (

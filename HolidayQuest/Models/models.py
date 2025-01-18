@@ -1,7 +1,7 @@
 from django.db import models
 from PIL import Image  # Importing PIL for image manipulation if needed
-
 # Country model
+from Users.models import User
 
 
 class Country(models.Model):
@@ -35,7 +35,8 @@ class Hotel(models.Model):
     city = models.ForeignKey(
         City,
         on_delete=models.CASCADE,
-        related_name='hotels')
+        related_name='hotels'
+    )
     country = models.ForeignKey(
         Country,
         on_delete=models.CASCADE,
@@ -49,6 +50,11 @@ class Hotel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(
         upload_to='hotel_images/', null=True, blank=False)
+
+    created_by = models.ForeignKey(
+        User,  # Reference the User model
+        on_delete=models.CASCADE,
+        related_name='hotels', default=1)
 
     def __str__(self):
         return self.name
