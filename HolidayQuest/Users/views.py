@@ -8,19 +8,26 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializer import User_serializer
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from.models import User
+from django.contrib import messages
+from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from Users.authentication import CookieJWTAuthentication
 
 
 
-class register_view(APIView):
+class RegisterView(APIView):
     """
     API endpoint that allows users to be created.
     """
     # Allows any user to access this api
     permission_classes = [AllowAny]
     
+    def get(self, request):
+        """
+        Serves the registration HTML template.
+        """
+        return render(request, 'users/register.html')
     
     def post(self, request):
         """
@@ -37,13 +44,19 @@ class register_view(APIView):
         return Response(serializer.data)
 
 
-class login_view(APIView):
+class LoginView(APIView):
     """
     API endpoint that allows users to login.
     """
     # Allows any user to access this api
     permission_classes = [AllowAny]
     
+    
+    def get(self, request):
+        """
+        Serves the login HTML template
+        """
+        return render(request, 'users/login.html')
     
     def post(self, request):
         email = request.data['email']
@@ -93,7 +106,7 @@ class login_view(APIView):
         return response
 
 
-class logout_view(APIView):
+class LogoutView(APIView):
     """
     API endpoint to log out a user by deleting the JWT cookie.
     """
@@ -106,8 +119,23 @@ class logout_view(APIView):
         response.delete_cookie('access')
         response.delete_cookie('refresh')
         return response
+    
+    def get(self, request):
+        response = redirect('login')
+        response.delete_cookie('access')
+        response.delete_cookie('refresh')
+        messages.success(request, 'Logged out successfully.')
+        return response
 
-@method_decorator(csrf_exempt, name='dispatch')
+
+class CheckAuthView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({"authenticated": True})
+
+
+#@method_decorator(csrf_exempt, name='dispatch')
 class ProtectedView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [CookieJWTAuthentication]
