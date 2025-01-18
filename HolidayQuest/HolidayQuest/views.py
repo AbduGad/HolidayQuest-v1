@@ -1,6 +1,8 @@
 import requests
 from django.shortcuts import render
 from .forms import HotelForm
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 
 # http://127.0.0.1:8000/create-hotel-form/
 
@@ -51,3 +53,13 @@ def create_hotel_form(request):
         form = HotelForm()
 
     return render(request, 'HolidayQuest/create_hotel.html', {'form': form})
+
+
+class HomePage(APIView):
+    """
+    Home page
+    """
+    permission_classes=[AllowAny]
+    
+    def get(self, request):
+        return render(request, 'home.html')
