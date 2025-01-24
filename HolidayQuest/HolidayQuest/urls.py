@@ -23,7 +23,7 @@ from .views import HomePage
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/', HomePage.as_view(), name='home'),
+    path('', HomePage.as_view(), name='home'),
     path('user/', include('Users.urls')),
     path('api/', include('Models.urls')),
     path('create-hotel-form/', views.create_hotel_form, name='create_hotel'),

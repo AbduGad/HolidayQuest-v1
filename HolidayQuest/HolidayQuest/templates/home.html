@@ -73,7 +73,6 @@ body {
     background-color: #1d4ed8;
 }
 
-/* Hero Section */
 .hero {
     background-color: #1f2937;
     height: 500px;
@@ -130,7 +129,6 @@ body {
     background-color: #1d4ed8;
 }
 
-/* Features Section */
 .features {
     padding: 64px 0;
 }
@@ -165,7 +163,6 @@ body {
     margin-bottom: 8px;
 }
 
-/* Destinations Section */
 .destinations {
     background-color: #f3f4f6;
     padding: 64px 0;
@@ -326,7 +323,8 @@ footer {
                     <a href="#">Plan Trip</a>
                     <a href="#">About</a>
                     <a href="#">Contact</a>
-                    <a href="#" class="sign-in-btn">Sign In</a>
+                    <div id='authButtons'>
+                    </div>
                 </div>
             </div>
         </div>
@@ -444,5 +442,55 @@ footer {
             </div>
         </div>
     </footer>
+    <script>
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch('/user/isloggedin/', {
+                    method: 'GET',
+                    credentials: 'include', //for sending cookies
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    // User is authenticated
+                    document.getElementById('authButtons').innerHTML = `
+                        <a href="#" class="sign-in-btn">Add Hotel</a>
+                        <a href="#" class="sign-in-btn" onclick="logout()">Sign Out</a>
+                    `;
+                } else {
+                    // User is not authenticated
+                    document.getElementById('authButtons').innerHTML = `
+                        <a href="{% url 'login' %}" class="sign-in-btn">Sign In</a>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error checking auth status:', error);
+                document.getElementById('authButtons').innerHTML = `
+                    <a href="/login" class="sign-in-btn">Sign In</a>
+                `;
+            }
+        }
+
+        async function logout() {
+            try {
+                const response = await fetch('/user/logout/', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    // redirect to home page
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+        }
+
+        // check auth status when page loads
+        document.addEventListener('DOMContentLoaded', checkAuthStatus);
+    </script>
 </body>
 </html>

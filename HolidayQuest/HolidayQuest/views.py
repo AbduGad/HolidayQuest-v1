@@ -62,4 +62,5 @@ class HomePage(APIView):
     permission_classes=[AllowAny]
     
     def get(self, request):
+        
         return render(request, 'home.html')
