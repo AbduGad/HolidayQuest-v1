@@ -47,26 +47,26 @@ def post():
     refresh_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2MjU1NDcxLCJpYXQiOjE3MzYyNTUxNzEsImp0aSI6ImY1OTI3YWE0NTNlNDQ5Y2E4Y2UyNDQ1ODEwMTdjYmIxIiwidXNlcl9pZCI6NH0.J2Vs2O4WhT7dW4Kzf-dJLL6c4HkAoUa6VDeDBemo2VA"
 
 
-post()
-# Headers including the access token
-# data = {
-#     'name': "small hotel"
-# }
+# post()
+import requests
 
-# # Access token
+# Endpoint URL
+url = "http://127.0.0.1:8000/user/register/"
 
-# # Headers with Authorization and Content-Type
-# headers = {
-#     "Authorization": f"Bearer {access_token}",
-#     "Content-Type": "application/json",  # Indicating that the data is in JSON format
-# }
+# User data
+user_data = {
+    "first_name": "John",  # Replace with desired first name
+    "last_name": "Doe",    # Replace with desired last name
+    "email": "john.doe@example.com",  # Replace with desired email
+    "password": "password123"  # Replace with desired password
+}
 
-# # Send the PUT request with the body as JSON
-# # Use json parameter instead of params
-# response = requests.put(url, json=data, headers=headers)
+# Sending POST request to register the new user
+response = requests.post(url, data=user_data)
 
-# # Handle the response
-# if response.status_code == 200:
-#     print('Hotel modified successfully')
-# else:
-#     print(f'Error: {response.status_code}, {response.content}')
+# Checking if the registration was successful
+if response.status_code == 201:
+    print("User registered successfully!")
+else:
+    print(f"Failed to register user. Status code: {response.status_code}")
+    print("Response:", response.text)

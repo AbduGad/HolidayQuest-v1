@@ -1,0 +1,3 @@
+[console_scripts]
+thread=thread.__main__:app
+
