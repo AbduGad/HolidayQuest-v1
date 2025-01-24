@@ -311,6 +311,7 @@ footer {
     </style>
 </head>
 <body>
+    {% load static %}
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
@@ -371,28 +372,28 @@ footer {
             <h2>Popular Destinations</h2>
             <div class="destinations-grid">
                 <div class="destination-card">
-                    <img src="placeholder-image.jpg" alt="Paris">
+                    <img src="{% static "images/default.jpg" %}" alt="Paris">
                     <div class="destination-info">
                         <h3>Paris, France</h3>
                         <p>Experience the city of love</p>
                     </div>
                 </div>
                 <div class="destination-card">
-                    <img src="placeholder-image.jpg" alt="Bali">
+                    <img src="/static/placeholder-image.jpg" alt="Bali">
                     <div class="destination-info">
                         <h3>Bali, Indonesia</h3>
                         <p>Tropical paradise awaits</p>
                     </div>
                 </div>
                 <div class="destination-card">
-                    <img src="placeholder-image.jpg" alt="Tokyo">
+                    <img src="{% static "images/default.jpg" %}" alt="Tokyo">
                     <div class="destination-info">
                         <h3>Tokyo, Japan</h3>
                         <p>Modern meets traditional</p>
                     </div>
                 </div>
                 <div class="destination-card">
-                    <img src="placeholder-image.jpg" alt="New York">
+                    <img src="/static/placeholder-image.jpg" alt="New York">
                     <div class="destination-info">
                         <h3>New York, USA</h3>
                         <p>The city that never sleeps</p>
