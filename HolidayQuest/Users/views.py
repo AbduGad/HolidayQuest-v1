@@ -85,7 +85,7 @@ class LoginView(APIView):
         response.set_cookie(
             key='access',
             value=access_token,
-            httponly=True,
+            httponly=False,
             # domain='localhost',   # Shared domain for local dev
             # secure=False,         # Local development (HTTPS not required)
             # samesite=None,       # Allow cross-origin requests

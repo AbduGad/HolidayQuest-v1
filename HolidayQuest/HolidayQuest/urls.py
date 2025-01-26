@@ -26,7 +26,6 @@ urlpatterns = [
     path('', HomePage.as_view(), name='home'),
     path('user/', include('Users.urls')),
     path('api/', include('Models.urls')),
-    path('create-hotel-form/', views.create_hotel_form, name='create_hotel'),
     path('Api_forms/', include('Api_forms.urls', namespace='Api_forms')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
