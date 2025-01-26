@@ -13,5 +13,6 @@ urlpatterns = [
         name='edit_hotel'
     ),
     path('create-hotel/', views.create_hotel_form, name='create_hotel'),
+    path('hotel-detail/', views.hotel_detail, name='hotel_detail'),
 
 ]

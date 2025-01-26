@@ -101,7 +101,7 @@ def hotel_detail(request):
     hotel_id = request.GET.get('id')
 
     if not hotel_id:
-        return render(request, 'hotels/error.html', {
+        return render(request, 'Api_forms/error.html', {
             'message': 'No hotel ID provided'
         })
 
@@ -110,14 +110,13 @@ def hotel_detail(request):
         api_url = f'{settings.API_BASE_URL}/api/get-hotel/?id={hotel_id}'
         response = requests.get(api_url)
         response.raise_for_status()  # Raise an exception for bad responses
-
         hotel_data = response.json()
 
-        return render(request, 'hotels/detail.html', {
+        return render(request, 'Api_forms/hotels_detail.html', {
             'hotel': hotel_data
         })
 
     except requests.RequestException as e:
-        return render(request, 'hotels/error.html', {
+        return render(request, 'Api_forms/error.html', {
             'message': f'Error fetching hotel details: {str(e)}'
         })

@@ -1,0 +1,230 @@
+{% block content %}
+<style>
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #7e3af2 0%, #2563eb 100%);
+    font-family: 'Inter', sans-serif;
+  }
+
+  .hotel-detail {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .hotel-detail h1 {
+    color: #1f2937;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    font-weight: 600;
+  }
+
+  .hotel-image {
+    margin-bottom: 2rem;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .hotel-image img {
+    width: 50%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .hotel-info {
+    background-color: #f9fafb;
+    padding: 2rem;
+    border-radius: 12px;
+  }
+
+  .hotel-info p {
+    margin-bottom: 1.25rem;
+    color: #4b5563;
+    font-size: 1.1rem;
+  }
+
+  .hotel-info strong {
+    color: #2563eb;
+    font-weight: 600;
+  }
+
+  .hotel-description h3 {
+    color: #1f2937;
+    font-size: 1.75rem;
+    margin: 1.5rem 0 1rem;
+    font-weight: 600;
+  }
+
+  .hotel-description p {
+    color: #4b5563;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 768px) {
+    .hotel-detail {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+  }
+  /* Navigation */
+  .navbar {
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+  }
+
+  .logo a {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2563eb;
+    text-decoration: none;
+    margin-left: 50px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .nav-links a {
+    color: #4b5563;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .nav-links a:hover {
+    color: #2563eb;
+  }
+
+  .sign-in-btn {
+    background-color: #2563eb;
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+  }
+
+  .sign-in-btn:hover {
+    background-color: #1d4ed8;
+  }
+  :root {
+    --primary-blue: #2563eb;
+    --secondary-purple: #7c3aed;
+    --light-background: #f0f4ff;
+    --text-dark: #1f2937;
+  }
+  .search-btn {
+    background-color: #2563eb;
+    color: white;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+
+  .search-btn:hover {
+    background-color: #1d4ed8;
+  }
+</style>
+{% load static %}
+<nav class="navbar">
+  <div class="container">
+    <div class="nav-content">
+      <div class="logo">
+        <a href="/">HolidayQuest</a>
+      </div>
+      <div class="nav-links">
+        <button onclick="window.location.href='/hotels/'" class="search-btn">
+          Explore Hotels
+        </button>
+        <a href="/Api_forms/create-hotel/">Add New Hotel</a>
+        <div id="authButtons"></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="hotel-detail">
+  <h1>{{ hotel.name }}</h1>
+
+  <div class="hotel-image">
+    <img src="{{ hotel.image }}" alt="{{ hotel.name }}" class="img-fluid" />
+  </div>
+
+  <div class="hotel-info">
+    <p><strong>Address:</strong> {{ hotel.address }}</p>
+    <p><strong>City:</strong> {{ hotel.city }}, {{ hotel.country }}</p>
+    <p>
+      <strong>Rooms Available:</strong> {{ hotel.rooms_available}} /
+      {{hotel.total_rooms}}
+    </p>
+    <p><strong>Price:</strong> ${{ hotel.price }}</p>
+
+    <div class="hotel-description">
+      <h3>Description</h3>
+      <p>{{ hotel.description }}</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    checkAuthStatus();
+  });
+
+  async function checkAuthStatus() {
+    try {
+      const response = await fetch('/user/isloggedin/', {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        document.getElementById('authButtons').innerHTML = `
+                        <p style= 'padding: 30px'>Hi <strong>{{username}}</strong></a>
+                        <a href="#" class="sign-in-btn" onclick="logout()">Sign Out</a>
+                    `;
+      } else {
+        // User is not authenticated
+        document.getElementById('authButtons').innerHTML = `
+                        <a href="{% url 'login' %}" class="sign-in-btn">Sign In</a>
+                    `;
+      }
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+      window.location.href = '/user/login/';
+    }
+  }
+
+  async function logout() {
+    try {
+      const response = await fetch('/user/logout/', {
+        method: 'POST',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        window.location.href = '/';
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  }
+</script>
+{% endblock %}
