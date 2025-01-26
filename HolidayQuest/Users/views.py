@@ -21,13 +21,13 @@ class RegisterView(APIView):
     """
     # Allows any user to access this api
     permission_classes = [AllowAny]
-    
+
     def get(self, request):
         """
         Serves the registration HTML template.
         """
         return render(request, 'users/register.html')
-    
+
     def post(self, request):
         """
         Creates the new user. POST request
@@ -49,14 +49,13 @@ class LoginView(APIView):
     """
     # Allows any user to access this api
     permission_classes = [AllowAny]
-    
-    
+
     def get(self, request):
         """
         Serves the login HTML template
         """
         return render(request, 'users/login.html')
-    
+
     def post(self, request):
         email = request.data['email']
         password = request.data['password']
@@ -86,7 +85,7 @@ class LoginView(APIView):
         response.set_cookie(
             key='access',
             value=access_token,
-            #httponly=True,
+            httponly=False,
             # domain='localhost',   # Shared domain for local dev
             # secure=False,         # Local development (HTTPS not required)
             # samesite=None,       # Allow cross-origin requests
@@ -121,7 +120,7 @@ class LogoutView(APIView):
         response.delete_cookie('access')
         response.delete_cookie('refresh')
         return response
-    
+
     def get(self, request):
         response = redirect('login')
         response.delete_cookie('access')
@@ -137,7 +136,7 @@ class CheckAuthView(APIView):
         return Response({"authenticated": True})
 
 
-#@method_decorator(csrf_exempt, name='dispatch')
+# @method_decorator(csrf_exempt, name='dispatch')
 class ProtectedView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [CookieJWTAuthentication]
