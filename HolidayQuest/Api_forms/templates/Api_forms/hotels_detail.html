@@ -1,11 +1,85 @@
 {% block content %}
 <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
   body {
     margin: 0;
     min-height: 100vh;
     background: linear-gradient(135deg, #7e3af2 0%, #2563eb 100%);
     font-family: 'Inter', sans-serif;
   }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+  /* Navigation */
+.navbar {
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+}
+
+.logo a {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+}
+
+.nav-links a {
+    color: #4b5563;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #2563eb;
+}
+
+.sign-in-btn {
+    background-color: #2563eb;
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.sign-in-btn:hover {
+    background-color: #1d4ed8;
+}
+
+.search-btn {
+    background-color: #2563eb;
+    color: white;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.search-btn:hover {
+    background-color: #1d4ed8;
+}
 
   .hotel-detail {
     max-width: 1200px;
@@ -70,95 +144,30 @@
       padding: 1.5rem;
     }
   }
-  /* Navigation */
-  .navbar {
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  .nav-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 70px;
-  }
-
-  .logo a {
-    font-size: 24px;
-    font-weight: bold;
-    color: #2563eb;
-    text-decoration: none;
-    margin-left: 50px;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    align-items: center;
-  }
-
-  .nav-links a {
-    color: #4b5563;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-
-  .nav-links a:hover {
-    color: #2563eb;
-  }
-
-  .sign-in-btn {
-    background-color: #2563eb;
-    color: white !important;
-    padding: 8px 16px;
-    border-radius: 6px;
-    transition: background-color 0.3s ease;
-  }
-
-  .sign-in-btn:hover {
-    background-color: #1d4ed8;
-  }
-  :root {
-    --primary-blue: #2563eb;
-    --secondary-purple: #7c3aed;
-    --light-background: #f0f4ff;
-    --text-dark: #1f2937;
-  }
-  .search-btn {
-    background-color: #2563eb;
-    color: white;
-    padding: 12px 32px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-  }
-
-  .search-btn:hover {
-    background-color: #1d4ed8;
-  }
+  
 </style>
 {% load static %}
-<nav class="navbar">
-  <div class="container">
-    <div class="nav-content">
-      <div class="logo">
-        <a href="/">HolidayQuest</a>
-      </div>
-      <div class="nav-links">
-        <button onclick="window.location.href='/hotels/'" class="search-btn">
-          Explore Hotels
-        </button>
-        <a href="/Api_forms/create-hotel/">Add New Hotel</a>
-        <div id="authButtons"></div>
-      </div>
-    </div>
-  </div>
-</nav>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <a href="/">HolidayQuest</a>
+                </div>
+                <div class="nav-links">
+                    <button onclick="window.location.href='/hotels/'" class="search-btn">
+                        Explore Hotels
+                    </button>
+                    <a href="#">Plan Trip</a>
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                    <div id='authButtons'>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
 
 <div class="hotel-detail">
   <h1>{{ hotel.name }}</h1>
