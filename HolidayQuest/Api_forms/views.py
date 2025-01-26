@@ -6,6 +6,8 @@ from rest_framework.permissions import AllowAny
 import requests
 from django.http import JsonResponse
 from Models.models import Hotel
+import requests
+from django.conf import settings
 
 
 class EditDeleteHotelForm(forms.Form):
@@ -90,3 +92,32 @@ def create_hotel_form(request):
         form = CreateHotelForm()
 
     return render(request, 'Api_forms/create-hotel.html', {'form': form})
+
+
+def hotel_detail(request):
+    """
+    View to fetch and display hotel details by ID
+    """
+    hotel_id = request.GET.get('id')
+
+    if not hotel_id:
+        return render(request, 'hotels/error.html', {
+            'message': 'No hotel ID provided'
+        })
+
+    try:
+        # Fetch hotel details from API
+        api_url = f'{settings.API_BASE_URL}/api/get-hotel/?id={hotel_id}'
+        response = requests.get(api_url)
+        response.raise_for_status()  # Raise an exception for bad responses
+
+        hotel_data = response.json()
+
+        return render(request, 'hotels/detail.html', {
+            'hotel': hotel_data
+        })
+
+    except requests.RequestException as e:
+        return render(request, 'hotels/error.html', {
+            'message': f'Error fetching hotel details: {str(e)}'
+        })

@@ -71,21 +71,12 @@ def post():
 # else:
 #     print(f'Error: {response.status_code}, {response.content}')
 import requests
-
-url = "http://127.0.0.1:8000/user/login/"
-payload = {
-    "email": "john.doe@example.com",
-    "password": "password123"
-}
-
-try:
-    response = requests.post(url, json=payload)
-    # Check if the request was successful
-    if response.status_code == 200:
-        print("Login successful!")
-        print("Response:", response.json())
-    else:
-        print(f"Failed to login: {response.status_code}")
-        print("Error:", response.text)
-except requests.exceptions.RequestException as e:
-    print(f"An error occurred: {e}")
+url = "http://127.0.0.1:8000/get-hotel/?id=1"
+response = requests.get(url)
+# Check if the request was successful
+if response.status_code == 200:
+    print("Login successful!")
+    print("Response:", response.json())
+else:
+    print(f"Failed to login: {response.status_code}")
+    print("Error:", response.text)
