@@ -201,7 +201,7 @@
     </style>
 </head>
 <body>
-    {% load static%}
+    {% load static %}
     <nav class="navbar">
         <div class="container">
             <div class="nav-content">
@@ -213,7 +213,7 @@
                         Explore Hotels
                     </button>
                     <a href="#">My Hotels</a>
-                    <a onclick= 'Createhotel()'>Add New Hotel</a>
+                    <a href= "/Api_forms/create-hotel/">Add New Hotel</a>
                     <div id='authButtons'></div>
                 </div>
             </div>
@@ -343,7 +343,15 @@
 
         {% comment %} async function Createhotel() {
             try {
-                const response = await fetch('/Api_forms/hotels', {
+                const response = await fetch('/Api_forms/create-hotel/', {
+                method= 'POST'
+                credentials= 'include'
+            });
+            const data = await response.json();
+            if (re)
+            } catch(e) {
+                console.error('Error searching user hotels:', error);
+            }
         } {% endcomment %}
 
         async function deleteHotel(hotelId) {

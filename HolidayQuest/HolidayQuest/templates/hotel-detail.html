@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HolidayQuest - Hotel Details</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f0f4ff;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo a {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #4b5563;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .sign-in-btn {
+            background-color: #2563eb;
+            color: white !important;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sign-in-btn:hover {
+            background-color: #1d4ed8;
+        }
+        :root {
+            --primary-blue: #2563eb;
+            --secondary-purple: #7c3aed;
+            --light-background: #f0f4ff;
+            --text-dark: #1f2937;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .hotel-details-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.1);
+            display: flex;
+            overflow: hidden;
+        }
+
+        .hotel-main-image {
+            width: 50%;
+            object-fit: cover;
+        }
+
+        .hotel-info {
+            padding: 30px;
+            width: 50%;
+        }
+
+        .hotel-name {
+            color: #2563eb;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .hotel-location {
+            color: #4b5563;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .hotel-price {
+            color: #7c3aed;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .hotel-description {
+            color: #4b5563;
+            margin-bottom: 20px;
+        }
+
+        .amenities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .amenity-tag {
+            background-color: #2563eb;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .booking-btn {
+            background-color: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .booking-btn:hover {
+            background-color: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    {% load static %}
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <a href="/">HolidayQuest</a>
+                </div>
+                <div class="nav-links">
+                    <button onclick="window.location.href='/hotels/'" class="search-btn">
+                        Explore Hotels
+                    </button>
+                    <a href="#">Plan Trip</a>
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                    <div id='authButtons'>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div id="hotelDetailsContainer" class="hotel-details-container">
+            <!-- Hotel details will be dynamically populated -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Extract hotel ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const hotelId = urlParams.get('id');
+            
+            if (hotelId) {
+                fetchHotelDetails(hotelId);
+            } else {
+                document.getElementById('hotelDetailsContainer').innerHTML = '<p>No hotel selected</p>';
+            }
+        });
+
+        async function fetchHotelDetails(hotelId) {
+            try {
+                const response = await fetch(`/api/get-hotel/?id=${hotelId}/`);
+                const hotel = await response.json();
+
+                if (!hotel) {
+                    throw new Error('Hotel not found');
+                }
+
+                renderHotelDetails(hotel);
+            } catch (error) {
+                console.error('Error fetching hotel details:', error);
+                document.getElementById('hotelDetailsContainer').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+
+        function renderHotelDetails(hotel) {
+            const container = document.getElementById('hotelDetailsContainer');
+            container.innerHTML = `
+                <div class="hotel-header">
+                    <h1 class="hotel-name">${hotel.name}</h1>
+                    <div class="hotel-price">$${hotel.price}/night</div>
+                </div>
+
+                <div class="hotel-image-gallery">
+                    <img src="${hotel.image}" alt="${hotel.name}" class="hotel-main-image">
+                </div>
+
+                <div class="hotel-info-section">
+                    <div class="hotel-description">
+                        <h2>About this Hotel</h2>
+                        <p>${hotel.description}</p>
+                    </div>
+                    <div class="hotel-additional-info">
+                        <h3>Hotel Details</h3>
+                        <div class="info-grid">
+                            <strong>Location:</strong> ${hotel.city}, ${hotel.country}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        //function proceedToBooking(hotelId) {
+        //    window.location.href = `/booking/${hotelId}`;
+        //}
+    </script>
+</body>
+</html>

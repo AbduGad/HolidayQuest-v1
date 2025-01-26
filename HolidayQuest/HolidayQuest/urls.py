@@ -29,5 +29,6 @@ urlpatterns = [
     path('Api_forms/', include('Api_forms.urls', namespace='Api_forms')),
     path('hotels/', hotel_listing_page.as_view(), name='hotels'),
     path('userhotels/', user_hotel_listing_page.as_view(), name='userhotels'),
+    #path()
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
