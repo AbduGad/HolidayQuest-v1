@@ -1,12 +1,8 @@
 from django import forms
 from django.shortcuts import render, redirect
 from django.contrib import messages
-import requests
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
-from django.shortcuts import render
-from django.contrib import messages
 import requests
 from django.http import JsonResponse
 from Models.models import Hotel
