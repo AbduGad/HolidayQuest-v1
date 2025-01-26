@@ -175,6 +175,7 @@ class UserHotelsView(APIView):
                 'country': hotel.country.name,
                 'price': hotel.price,
                 'image': hotel.image.url,
+                'description': hotel.description,
             } for hotel in hotels
         ]
 
