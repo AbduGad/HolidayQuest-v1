@@ -86,7 +86,7 @@ class LoginView(APIView):
         response.set_cookie(
             key='access',
             value=access_token,
-            httponly=True,
+            #httponly=True,
             # domain='localhost',   # Shared domain for local dev
             # secure=False,         # Local development (HTTPS not required)
             # samesite=None,       # Allow cross-origin requests
@@ -99,7 +99,7 @@ class LoginView(APIView):
         response.set_cookie(
             key='refresh',
             value=str(refresh_token),
-            httponly=True,
+            #httponly=True,
             # samesite='Lax',
             max_age=3600 * 24 * 7,  # 7 days
             path='/'
@@ -159,10 +159,23 @@ class UserHotelsView(APIView):
         user: User = request.user
         hotels = user.hotels.all() 
         #print(hotels)
+        name = request.query_params.get('name', '').strip()
+        country = request.query_params.get('country', '').strip()
+
+        if name:
+            hotels = hotels.filter(name__icontains=name)
+
+        if country:
+            hotels = hotels.filter(country__name__icontains=country)
+
         hotels_data = [
             {
                 'id': hotel.id,
                 'name': hotel.name,
+                'city': hotel.city.name,
+                'country': hotel.country.name,
+                'price': hotel.price,
+                'image': hotel.image.url,
             } for hotel in hotels
         ]
 

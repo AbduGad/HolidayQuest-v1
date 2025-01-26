@@ -201,6 +201,7 @@
     </style>
 </head>
 <body>
+    {% load static%}
     <nav class="navbar">
         <div class="container">
             <div class="nav-content">
@@ -212,7 +213,7 @@
                         Explore Hotels
                     </button>
                     <a href="#">My Hotels</a>
-                    <a href="#">Add New Hotel</a>
+                    <a onclick= 'Createhotel()'>Add New Hotel</a>
                     <div id='authButtons'></div>
                 </div>
             </div>
@@ -222,8 +223,8 @@
     <div class="body-container">
         <div class="search-container">
             <input type="text" placeholder="🔍 Search my hotels..." id="searchInput">
-            <select id="cityFilter">
-                <option value="">All Cities</option>
+            <select id="countryFilter">
+                <option value="">All Countries</option>
             </select>
             <button class="search-btn" onclick="searchUserHotels()">Search</button>
         </div>
@@ -245,20 +246,50 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             checkAuthStatus();
+            fetchCountries();
             searchUserHotels();
         });
 
+        async function fetchCountries() {
+            try {
+
+                const response = await fetch('/user/user_created_hotels/', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            const data = await response.json();
+            const hotels = data.hotels;
+
+            // Extract unique country names
+            const countries = [...new Set(hotels.map(hotel => hotel.country))];
+
+            const countryDropdown = document.getElementById('countryFilter');
+
+            //countryDropdown.innerHTML = '<option value="">Select a country</option>';
+
+            countries.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country; // Set the value attribute
+                option.textContent = country; // Set the visible text
+                countryDropdown.appendChild(option);
+            });
+            } catch (error) {
+                console.error('Error fetching cities/countries:', error);
+            }
+        }
+
         async function searchUserHotels() {
             const name = document.getElementById('searchInput').value;
-            const city = document.getElementById('cityFilter').value;
+            const country = document.getElementById('countryFilter').value;
 
             const params = new URLSearchParams();
             if (name) params.append('name', name);
-            if (city) params.append('city', city);
+            if (country) params.append('country', country);
             params.append('page', currentPage);
 
             try {
-                /*const response = await fetch('/api/user/hotels/?${params.toString()}', {
+                const response = await fetch(`/user/user_created_hotels/?${params.toString()}`, {
                     method: 'GET',
                     credentials: 'include'
                 });
@@ -273,7 +304,7 @@
                 const userHotelList = document.getElementById('userHotelList');
                 userHotelList.innerHTML = ''; 
 
-                const hotels = data.results || data;*/
+                const hotels = data.hotels;
 
                 if (hotels.length === 0) {
                     userHotelList.innerHTML = '<p>You have not added any hotels yet.</p>';
@@ -308,9 +339,14 @@
             return card;
         }
 
+        {% comment %} async function Createhotel() {
+            try {
+                const response = await fetch('/Api_forms/hotels', {
+        } {% endcomment %}
+
         async function deleteHotel(hotelId) {
             try {
-                const response = await fetch(`/api/hotels/${hotelId}/`, {
+                const response = await fetch(`/api/delete-hotel/?hotel_id=${hotelId}`, {
                     method: 'DELETE',
                     credentials: 'include'
                 });
@@ -329,7 +365,7 @@
 
         function editHotel(hotelId) {
             // Redirect to hotel edit page
-            window.location.href = `/hotels/edit/${hotelId}/`;
+            window.location.href = `/Api_forms/hotel/edit/`;
         }
 
         function changePage(direction) {
@@ -348,15 +384,16 @@
 
                 if (response.ok) {
                     document.getElementById('authButtons').innerHTML = `
-                        <a href="/hotels/add" class="sign-in-btn">Add Hotel</a>
+                        <p style= 'padding: 30px'>Hi <strong>{{username}}</strong></a>
                         <a href="#" class="sign-in-btn" onclick="logout()">Sign Out</a>
                     `;
                 } else {
-                    window.location.href = '/login/';
+                    alert('Must be logged in.')
+                    window.location.href = '/user/login/';
                 }
             } catch (error) {
                 console.error('Error checking auth status:', error);
-                window.location.href = '/login/';
+                window.location.href = '/user/login/';
             }
         }
 

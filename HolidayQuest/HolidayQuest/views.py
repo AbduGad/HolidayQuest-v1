@@ -86,6 +86,7 @@ class user_hotel_listing_page(APIView):
         user_id = request.user.id
         hotels = Hotel.objects.filter(created_by=user_id)
         
-        return render(request, 'user-hotel-listing.html', {'hotels': hotels})
+        return render(request, 'user-hotel-listing.html', {'hotels': hotels, 
+                                                           'username': request.user.first_name})
     
     
