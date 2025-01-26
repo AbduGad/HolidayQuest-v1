@@ -157,9 +157,8 @@ class UserHotelsView(APIView):
     def get(self, request):
         # Fetch the hotels associated with the authenticated user
         user: User = request.user
-        hotels = user.hotels.all()  # Assuming `hotels` is a related name
-        print(hotels)
-        # Convert the hotel objects to a dictionary or serialize them
+        hotels = user.hotels.all() 
+        #print(hotels)
         hotels_data = [
             {
                 'id': hotel.id,

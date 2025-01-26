@@ -19,7 +19,7 @@ from django.urls import path, include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import HomePage
+from .views import HomePage, hotel_listing_page, user_hotel_listing_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,5 +28,7 @@ urlpatterns = [
     path('api/', include('Models.urls')),
     path('create-hotel-form/', views.create_hotel_form, name='create_hotel'),
     path('Api_forms/', include('Api_forms.urls', namespace='Api_forms')),
+    path('hotels/', hotel_listing_page.as_view(), name='hotels'),
+    path('userhotels/', user_hotel_listing_page.as_view(), name='userhotels'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

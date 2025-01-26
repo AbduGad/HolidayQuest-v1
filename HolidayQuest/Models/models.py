@@ -1,6 +1,5 @@
 from django.db import models
-from PIL import Image  # Importing PIL for image manipulation if needed
-# Country model
+from PIL import Image
 from Users.models import User
 
 
@@ -23,6 +22,8 @@ class City(models.Model):
         related_name='cities')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    image = models.ImageField(
+        upload_to='country_images/', null=True, blank=False)
 
     def __str__(self):
         return self.name

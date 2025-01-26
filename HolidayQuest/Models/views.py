@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from .models import Hotel, Country, City
 from .serializers import EditHotelSerializer, HotelSerializer, CountrySerializer, CitySerializer
@@ -14,6 +15,66 @@ from django.http import JsonResponse
 
 # http://127.0.0.1:8000/api/create-hotel/
 
+
+class City_view(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        data= request.data.copy()
+        country= data.get('country')
+        
+        if not country:
+            return Response({"error": "Country is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        country_link= get_object_or_404(Country, name=country)
+        data['country']= int(country_link.id)
+        
+        #print(data['country'])
+        #print(type(data['country']))
+        serializer = CitySerializer(data=data)
+        #print('2')
+        #print("Data to be serialized:", data)
+        if serializer.is_valid():
+            #print('2')
+            serializer.save()
+            #print('3')
+            return Response(serializer.data, 
+                            status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, 
+                            status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request):
+        cities = City.objects.all()[:4]
+        serializer = CitySerializer(cities, many=True)
+        return Response(serializer.data)
+
+
+class Country_view(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        serializer = CountrySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_cities(request):
+    cities = City.objects.values('name').distinct()
+    return Response(cities)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_countries(request):
+    countries = Country.objects.values('name').distinct()
+    return Response(countries)
 
 @api_view(['POST'])
 def create_hotel(request):
@@ -97,20 +158,24 @@ def get_hotel_detail(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def get_hotels_by_location(request):
+    name= request.query_params.get('name')
     country = request.query_params.get('country')
     city = request.query_params.get('city')
     min_price = request.query_params.get('min_price')
     max_price = request.query_params.get('max_price')
 
-    if not any([country, city, min_price, max_price]):
-        return Response(
-            {
-                "error": "Please provide at least one search criteria (country, city, or price range)."},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+    # if not any([country, city, min_price, max_price]):
+    #     # return Response(
+    #     #     {
+    #     #         "error": "Please provide at least one search criteria (country, city, or price range)."},
+    #     #     status=status.HTTP_400_BAD_REQUEST
+    #     # )
 
     try:
         queryset = Hotel.objects.all()
+        
+        if name:
+            queryset = queryset.filter(name__iexact=name)
 
         if country:
             queryset = queryset.filter(country__name__iexact=country)
@@ -164,13 +229,11 @@ def get_hotels_by_location(request):
 def edit_hotel(request):
     user: User = request.user
     # Get hotel ID and name from query parameters
-    print("5555 ", request.data)
-    print("5555 ", request.GET)
 
     hotel_id = request.GET.get('hotel_id')
     hotel_name = request.GET.get('hotel_name')
 
-    print("hotel_id :", hotel_id, "hotel_name: ", hotel_name)
+    # print("hotel_id :", hotel_id, "hotel_name: ", hotel_name)
     if not hotel_id and not hotel_name:
         return JsonResponse({"detail": "Hotel ID or name is required."},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -201,7 +264,7 @@ def edit_hotel(request):
         hotel_serializer.save()
         return JsonResponse(hotel_serializer.data, status=status.HTTP_200_OK)
     else:
-        print("---------------------------")
+        # print("---------------------------")
 
         return JsonResponse(hotel_serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)

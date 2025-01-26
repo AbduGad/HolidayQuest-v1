@@ -320,7 +320,9 @@ footer {
                     <a href="/">HolidayQuest</a>
                 </div>
                 <div class="nav-links">
-                    <a href="#">Destinations</a>
+                    <button onclick="window.location.href='/hotels/'" class="search-btn">
+                        Explore Hotels
+                    </button>
                     <a href="#">Plan Trip</a>
                     <a href="#">About</a>
                     <a href="#">Contact</a>
@@ -457,7 +459,7 @@ footer {
                 if (response.ok) {
                     // User is authenticated
                     document.getElementById('authButtons').innerHTML = `
-                        <a href="#" class="sign-in-btn">Add Hotel</a>
+                        <a href="{% url 'userhotels' %}" class="sign-in-btn">Add Hotel</a>
                         <a href="#" class="sign-in-btn" onclick="logout()">Sign Out</a>
                     `;
                 } else {
