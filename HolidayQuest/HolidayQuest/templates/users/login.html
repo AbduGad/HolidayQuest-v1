@@ -1,192 +1,205 @@
-{% extends 'users/base.html' %}
-
-{% block title %}Login - HolidayQuest{% endblock %}
-
-{% block content %}
+{% extends 'users/base.html' %} {% block title %}Login -
+HolidayQuest{%endblock%} {% block content %}
 <div class="container">
-    <div class="logo">
-        <a href="/">HolidayQuest</a>
+  <div class="logo">
+    <a href="/">HolidayQuest</a>
+  </div>
+  <h1 class="form-title">Welcome Back</h1>
+  <form id="login-form" method="post" action="{% url 'login' %}">
+    <div class="form-group">
+      <label class="form-label" for="email">Email</label>
+      <input type="email" id="email" name="email" class="form-input" required />
     </div>
-    <h1 class="form-title">Welcome Back</h1>
-    <form id="login-form" method="post" action="{% url 'login' %}">
-        <div class="form-group">
-            <label class="form-label" for="email">Email</label>
-            <input type="email" id="email" name="email" class="form-input" required>
-        </div>
-        <div class="form-group">
-            <label class="form-label" for="password">Password</label>
-            <input type="password" id="password" name="password" class="form-input" required>
-        </div>
-        <button type="submit" class="btn">Log In</button>
-        <div class="form-footer">
-            Don't have an account? <a href="{% url 'register' %}">Register</a>
-        </div>
-    </form>
+    <div class="form-group">
+      <label class="form-label" for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        class="form-input"
+        required
+      />
+    </div>
+    <button type="submit" class="btn">Log In</button>
+    <div class="form-footer">
+      Don't have an account? <a href="{% url 'register' %}">Register</a>
+    </div>
+  </form>
 </div>
 <script>
-    const loginForm = document.getElementById('login-form');
-    const errorMessage = document.getElementById('error-message');
+  const loginForm = document.getElementById('login-form');
+  const errorMessage = document.getElementById('error-message');
 
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-        try {
-            const response = await fetch('http://127.0.0.1:8000/user/login/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                alert(errorData.detail); // Show error message
-
-            } else {
-                const data = await response.json();
-                alert('Login successful!');
-                
-                window.location.href = '/'; // Redirect after successful login
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            errorMessage.textContent = 'Something went wrong. Please try again.';
-            errorMessage.style.display = 'block';
-        }
-    });
-</script>
-{% endblock %}
-
-
-
-
-{% comment %} <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <style>
-body {
-font-family: Arial, sans-serif;
-background-color: #f4f4f4;
-margin: 0;
-padding: 0;
-display: flex;
-justify-content: center;
-align-items: center;
-height: 100vh;
-}
-
-.container {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px 30px;
-    width: 300px;
-}
-
-h1 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    text-align: center;
-    color: #333;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #555;
-}
-
-input {
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-.error-message {
-    color: red;
-    font-size: 14px;
-    margin-top: 10px;
-    text-align: center;
-}
-    </style>
-    <script>
-document.getElementById('loginForm').addEventListener('submit', async function (event) {
-  event.preventDefault(); // Prevent form submission
-
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  const errorMessage = document.getElementById('errorMessage');
-
-  try {
-    const response = await fetch('http://127.0.0.1:8000/user/login/', {
+    try {
+      const response = await fetch('/user/login/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email, password }),
-    });
+        body: JSON.stringify({ email, password })
+      });
 
-    const data = await response.json();
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.detail); // Show error message
+      } else {
+        const data = await response.json();
+        alert('Login successful!');
 
-    if (response.ok) {
-          // Login successful
-          alert('Login successful!');
-          // Redirect to a protected page
-          window.location.href = '/register.html';
-    } else {  
-        errorMessage.textContent = data.detail || 'Login failed. Please try again.';
-    }
+        window.location.href = '/'; // Redirect after successful login
+      }
     } catch (error) {
-        errorMessage.textContent = 'An error occurred. Please try again.';
+      console.error('Error:', error);
+      errorMessage.textContent = 'Something went wrong. Please try again.';
+      errorMessage.style.display = 'block';
     }
-});
+  });
+</script>
+{% endblock %} {% comment %} <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px 30px;
+        width: 300px;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        text-align: center;
+        color: #333;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #555;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      .error-message {
+        color: red;
+        font-size: 14px;
+        margin-top: 10px;
+        text-align: center;
+      }
+    </style>
+    <script>
+      document
+        .getElementById('loginForm')
+        .addEventListener('submit', async function (event) {
+          event.preventDefault(); // Prevent form submission
+
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+          const errorMessage = document.getElementById('errorMessage');
+
+          try {
+            const response = await fetch('http://127.0.0.1:8000/user/login/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              // Login successful
+              alert('Login successful!');
+              // Redirect to a protected page
+              window.location.href = '/register.html';
+            } else {
+              errorMessage.textContent =
+                data.detail || 'Login failed. Please try again.';
+            }
+          } catch (error) {
+            errorMessage.textContent = 'An error occurred. Please try again.';
+          }
+        });
     </script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>Login</h1>
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            </div>
-            <button type="submit">Login</button>
-            <p id="errorMessage" class="error-message"></p>
-        </form>
+      <h1>Login</h1>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+        <button type="submit">Login</button>
+        <p id="errorMessage" class="error-message"></p>
+      </form>
     </div>
-</body>
-</html> {% endcomment %}
+  </body>
+</html>
+{% endcomment %}

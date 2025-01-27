@@ -9,15 +9,19 @@
         padding: 0;
         background-color: #f4f4f9;
       }
-      
+
       header {
-        background-color: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+        background-color: linear-gradient(
+          135deg,
+          var(--primary-blue),
+          var(--secondary-purple)
+        );
         padding: 10px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
       }
-      
+
       header .user-info {
         display: flex;
         align-items: center;
@@ -35,7 +39,7 @@
         transition: background-color 0.3s;
       }
       header .logout-btn:hover {
-        background-color:rgb(23, 70, 190);
+        background-color: rgb(23, 70, 190);
       }
       header .username {
         font-size: 1.1em;
@@ -132,23 +136,23 @@
         background-color: darkred;
       }
       .logo a {
-            display: flex;
-            margin-bottom: 30px;
-            justify-content: center;
-            font-size: 30px;
-            font-weight: bold;
-            color: #2563eb;
-            text-decoration: none;
-        }
+        display: flex;
+        margin-bottom: 30px;
+        justify-content: center;
+        font-size: 30px;
+        font-weight: bold;
+        color: #2563eb;
+        text-decoration: none;
+      }
     </style>
   </head>
   <body>
     <header>
-        <div class="logo">
-            <a href="/">HolidayQuest</a>
-        </div>
-       <h1>Create Hotel</h1>
-       <div class="user-info">
+      <div class="logo">
+        <a href="/">HolidayQuest</a>
+      </div>
+      <h1>Create Hotel</h1>
+      <div class="user-info">
         <div id="user-controls">
           <!-- This will be populated by JavaScript -->
         </div>
@@ -294,7 +298,7 @@
       async function handleLogout() {
         try {
           const token = getCookie('access');
-          const response = await fetch('http://127.0.0.1:8000/user/logout/', {
+          const response = await fetch('/user/logout/', {
             method: 'POST',
             headers: {
               Authorization: `Bearer ${token}`
@@ -357,7 +361,7 @@
           };
 
           try {
-            const response = await fetch('http://127.0.0.1:8000/user/login/', {
+            const response = await fetch('/user/login/', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -391,16 +395,13 @@
           const formData = new FormData(hotelForm);
 
           try {
-            const response = await fetch(
-              'http://127.0.0.1:8000/api/create-hotel/',
-              {
-                method: 'POST',
-                headers: {
-                  Authorization: `Bearer ${token}`
-                },
-                body: formData
-              }
-            );
+            const response = await fetch('/api/create-hotel/', {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${token}`
+              },
+              body: formData
+            });
 
             const responseData = await response.json();
 

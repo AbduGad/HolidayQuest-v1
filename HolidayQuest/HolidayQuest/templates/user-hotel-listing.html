@@ -1,426 +1,460 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>HolidayQuest - My Hotels</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            color: #333;
-        }
+      .add-hotel-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background: linear-gradient(to right, #6366f1, #8b5cf6);
+        /* This creates a gradient from blue to purple */
+        color: white !important; /* Using !important to override any existing styles */
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(99, 102, 241, 0.2);
+      }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        /* Navigation */
-        .navbar {
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      .add-hotel-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      }
 
-        .nav-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 70px;
-        }
+      .add-hotel-btn:hover {
+        background-color: #45a049;
+      }
+      body {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+        color: #333;
+      }
 
-        .logo a {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2563eb;
-            text-decoration: none;
-        }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      /* Navigation */
+      .navbar {
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            align-items: center;
-        }
+      .nav-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 70px;
+      }
 
-        .nav-links a {
-            color: #4b5563;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
+      .logo a {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2563eb;
+        text-decoration: none;
+      }
 
-        .nav-links a:hover {
-            color: #2563eb;
-        }
+      .nav-links {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+      }
 
-        .sign-in-btn {
-            background-color: #2563eb;
-            color: white !important;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: background-color 0.3s ease;
-        }
+      .nav-links a {
+        color: #4b5563;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
 
-        .sign-in-btn:hover {
-            background-color: #1d4ed8;
-        }
-        :root {
-            --primary-blue: #2563eb;
-            --secondary-purple: #7c3aed;
-            --light-background: #f0f4ff;
-            --text-dark: #1f2937;
-        }
+      .nav-links a:hover {
+        color: #2563eb;
+      }
 
-        .body-container {
-            font-family: 'Inter', 'Arial', sans-serif;
-            background-color: var(--light-background);
-            color: var(--text-dark);
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            line-height: 1.6;
-        }
+      .sign-in-btn {
+        background-color: #2563eb;
+        color: white !important;
+        padding: 8px 16px;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+      }
 
-        .search-container {
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.2);
-            margin-bottom: 30px;
-            display: flex;
-            gap: 15px;
-        }
+      .sign-in-btn:hover {
+        background-color: #1d4ed8;
+      }
+      :root {
+        --primary-blue: #2563eb;
+        --secondary-purple: #7c3aed;
+        --light-background: #f0f4ff;
+        --text-dark: #1f2937;
+      }
 
-        .search-container input,
-        .search-container select {
-            flex-grow: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background-color: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
+      .body-container {
+        font-family: 'Inter', 'Arial', sans-serif;
+        background-color: var(--light-background);
+        color: var(--text-dark);
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
 
-        .search-container input:focus,
-        .search-container select:focus {
-            outline: none;
-            transform: scale(1.02);
-        }
+      .search-container {
+        background: linear-gradient(
+          135deg,
+          var(--primary-blue),
+          var(--secondary-purple)
+        );
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(37, 99, 235, 0.2);
+        margin-bottom: 30px;
+        display: flex;
+        gap: 15px;
+      }
 
-        .search-btn {
-            background-color: #2563eb;
-            color: white;
-            padding: 12px 32px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
+      .search-container input,
+      .search-container select {
+        flex-grow: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
 
-        .search-btn:hover {
-            background-color: #1d4ed8;
-        }
+      .search-container input:focus,
+      .search-container select:focus {
+        outline: none;
+        transform: scale(1.02);
+      }
 
+      .search-btn {
+        background-color: #2563eb;
+        color: white;
+        padding: 12px 32px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+      }
+
+      .search-btn:hover {
+        background-color: #1d4ed8;
+      }
+
+      .hotel-card {
+        display: flex;
+        background: white;
+        border: none;
+        margin-bottom: 20px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 6px 15px rgba(37, 99, 235, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .hotel-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+      }
+
+      .hotel-image {
+        width: 300px;
+        height: 250px;
+        object-fit: cover;
+      }
+
+      .hotel-details {
+        padding: 25px;
+        flex-grow: 1;
+        background: linear-gradient(to right, #f0f4ff, white);
+      }
+
+      .hotel-name {
+        font-size: 1.8em;
+        color: var(--primary-blue);
+        margin-bottom: 10px;
+        font-weight: 600;
+      }
+
+      .hotel-price {
+        color: var(--secondary-purple);
+        font-size: 1.3em;
+        font-weight: bold;
+      }
+
+      .hotel-details p {
+        color: #4b5563;
+      }
+
+      @media (max-width: 768px) {
         .hotel-card {
-            display: flex;
-            background: white;
-            border: none;
-            margin-bottom: 20px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .hotel-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+          flex-direction: column;
         }
 
         .hotel-image {
-            width: 300px;
-            height: 250px;
-            object-fit: cover;
+          width: 100%;
+          height: 250px;
         }
 
-        .hotel-details {
-            padding: 25px;
-            flex-grow: 1;
-            background: linear-gradient(to right, #f0f4ff, white);
+        .search-container {
+          flex-direction: column;
         }
+      }
 
-        .hotel-name {
-            font-size: 1.8em;
-            color: var(--primary-blue);
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
+      .delete-btn {
+        background-color: #dc2626;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background-color 0.3s ease;
+      }
 
-        .hotel-price {
-            color: var(--secondary-purple);
-            font-size: 1.3em;
-            font-weight: bold;
-        }
-
-        .hotel-details p {
-            color: #4b5563;
-        }
-
-        @media (max-width: 768px) {
-            .hotel-card {
-                flex-direction: column;
-            }
-
-            .hotel-image {
-                width: 100%;
-                height: 250px;
-            }
-
-            .search-container {
-                flex-direction: column;
-            }
-        }
-        
-        .delete-btn {
-            background-color: #dc2626;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.3s ease;
-        }
-
-        .delete-btn:hover {
-            background-color: #b91c1c;
-        }
+      .delete-btn:hover {
+        background-color: #b91c1c;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     {% load static %}
     <nav class="navbar">
-        <div class="container">
-            <div class="nav-content">
-                <div class="logo">
-                    <a href="/">HolidayQuest</a>
-                </div>
-                <div class="nav-links">
-                    <button onclick="window.location.href='/hotels/'" class="search-btn">
-                        Explore Hotels
-                    </button>
-                    <a href="#">My Hotels</a>
-                    <a href= "/Api_forms/create-hotel/">Add New Hotel</a>
-                    <div id='authButtons'></div>
-                </div>
-            </div>
+      <div class="container">
+        <div class="nav-content">
+          <div class="logo">
+            <a href="/">HolidayQuest</a>
+          </div>
+          <div class="nav-links">
+            <button
+              onclick="window.location.href='/hotels/'"
+              class="search-btn"
+            >
+              Explore Hotels
+            </button>
+            <a href="#">My Hotels</a>
+            <a href="/Api_forms/create-hotel/" class="add-hotel-btn"
+              >Add New Hotel</a
+            >
+            <div id="authButtons"></div>
+          </div>
         </div>
+      </div>
     </nav>
 
     <div class="body-container">
-        <div class="search-container">
-            <input type="text" placeholder="🔍 Search my hotels..." id="searchInput">
-            <select id="countryFilter">
-                <option value="">All Countries</option>
-            </select>
-            <button class="search-btn" onclick="searchUserHotels()">Search</button>
-        </div>
+      <div class="search-container">
+        <input
+          type="text"
+          placeholder="🔍 Search my hotels..."
+          id="searchInput"
+        />
+        <select id="countryFilter">
+          <option value="">All Countries</option>
+        </select>
+        <button class="search-btn" onclick="searchUserHotels()">Search</button>
+      </div>
 
-        <div id="userHotelList">
-            <!-- User's hotels will be dynamically populated -->
-        </div>
+      <div id="userHotelList">
+        <!-- User's hotels will be dynamically populated -->
+      </div>
 
-        <div id="pagination">
-            <button class="search-btn" onclick="changePage(-1)">Previous</button>
-            <span id="currentPage">Page 1</span>
-            <button class="search-btn" onclick="changePage(1)">Next</button>
-        </div>
+      <div id="pagination">
+        <button class="search-btn" onclick="changePage(-1)">Previous</button>
+        <span id="currentPage">Page 1</span>
+        <button class="search-btn" onclick="changePage(1)">Next</button>
+      </div>
     </div>
 
     <script>
-        let currentPage = 1;
-        let totalPages = 1;
+      let currentPage = 1;
+      let totalPages = 1;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAuthStatus();
-            fetchCountries();
-            searchUserHotels();
-        });
+      document.addEventListener('DOMContentLoaded', () => {
+          checkAuthStatus();
+          fetchCountries();
+          searchUserHotels();
+      });
 
-        async function fetchCountries() {
-            try {
+      async function fetchCountries() {
+          try {
 
-                const response = await fetch('/user/user_created_hotels/', {
-                method: 'GET',
-                credentials: 'include'
-            });
+              const response = await fetch('/user/user_created_hotels/', {
+              method: 'GET',
+              credentials: 'include'
+          });
 
-            const data = await response.json();
-            const hotels = data.hotels;
+          const data = await response.json();
+          const hotels = data.hotels;
 
-            // Extract unique country names
-            const countries = [...new Set(hotels.map(hotel => hotel.country))];
+          // Extract unique country names
+          const countries = [...new Set(hotels.map(hotel => hotel.country))];
 
-            const countryDropdown = document.getElementById('countryFilter');
+          const countryDropdown = document.getElementById('countryFilter');
 
-            //countryDropdown.innerHTML = '<option value="">Select a country</option>';
+          //countryDropdown.innerHTML = '<option value="">Select a country</option>';
 
-            countries.forEach(country => {
-                const option = document.createElement('option');
-                option.value = country; // Set the value attribute
-                option.textContent = country; // Set the visible text
-                countryDropdown.appendChild(option);
-            });
-            } catch (error) {
-                console.error('Error fetching cities/countries:', error);
-            }
-        }
+          countries.forEach(country => {
+              const option = document.createElement('option');
+              option.value = country; // Set the value attribute
+              option.textContent = country; // Set the visible text
+              countryDropdown.appendChild(option);
+          });
+          } catch (error) {
+              console.error('Error fetching cities/countries:', error);
+          }
+      }
 
-        async function searchUserHotels() {
-            const name = document.getElementById('searchInput').value;
-            const country = document.getElementById('countryFilter').value;
+      async function searchUserHotels() {
+          const name = document.getElementById('searchInput').value;
+          const country = document.getElementById('countryFilter').value;
 
-            const params = new URLSearchParams();
-            if (name) params.append('name', name);
-            if (country) params.append('country', country);
-            params.append('page', currentPage);
+          const params = new URLSearchParams();
+          if (name) params.append('name', name);
+          if (country) params.append('country', country);
+          params.append('page', currentPage);
 
-            try {
-                const response = await fetch(`/user/user_created_hotels/?${params.toString()}`, {
-                    method: 'GET',
-                    credentials: 'include'
-                });
+          try {
+              const response = await fetch(`/user/user_created_hotels/?${params.toString()}`, {
+                  method: 'GET',
+                  credentials: 'include'
+              });
 
-                const data = await response.json();
+              const data = await response.json();
 
-                if (data.error) {
-                    document.getElementById('userHotelList').innerHTML = `<p>Error: ${data.error}</p>`;
-                    return;
-                }
+              if (data.error) {
+                  document.getElementById('userHotelList').innerHTML = `<p>Error: ${data.error}</p>`;
+                  return;
+              }
 
-                const userHotelList = document.getElementById('userHotelList');
-                userHotelList.innerHTML = ''; 
+              const userHotelList = document.getElementById('userHotelList');
+              userHotelList.innerHTML = '';
 
-                const hotels = data.hotels;
+              const hotels = data.hotels;
 
-                if (hotels.length === 0) {
-                    userHotelList.innerHTML = '<p>You have not added any hotels yet.</p>';
-                    return;
-                }
+              if (hotels.length === 0) {
+                  userHotelList.innerHTML = '<p>You have not added any hotels yet.</p>';
+                  return;
+              }
 
-                hotels.forEach(hotel => {
-                    const hotelCard = createUserHotelCard(hotel);
-                    userHotelList.appendChild(hotelCard);
-                });
+              hotels.forEach(hotel => {
+                  const hotelCard = createUserHotelCard(hotel);
+                  userHotelList.appendChild(hotelCard);
+              });
 
-            } catch (error) {
-                console.error('Error searching user hotels:', error);
-                document.getElementById('userHotelList').innerHTML = `<p>Error: ${error.message}</p>`;
-            }
-        }
+          } catch (error) {
+              console.error('Error searching user hotels:', error);
+              document.getElementById('userHotelList').innerHTML = `<p>Error: ${error.message}</p>`;
+          }
+      }
 
-        function createUserHotelCard(hotel) {
-            const card = document.createElement('div');
-            console.log(hotel.description);
+      function createUserHotelCard(hotel) {
+          const card = document.createElement('div');
+          console.log(hotel.description);
 
-            card.className = 'hotel-card';
-            card.innerHTML = `
-                <img src="${hotel.image}" alt="${hotel.name}" class="hotel-image">
-                <div class="hotel-details">
-                    <h2 class="hotel-name">${hotel.name}</h2>
-                    <p>Location: ${hotel.city}, ${hotel.country}</p>
-                    <p>${hotel.description}</p>
-                    <p class="hotel-price">$${hotel.price}/night</p>
-                    <button class="search-btn" onclick="editHotel(${hotel.id})">Edit</button>
-                    <button class="delete-btn" onclick="deleteHotel(${hotel.id})">Delete</button>
-                </div>
-            `;
-            return card;
-        }
+          card.className = 'hotel-card';
+          card.innerHTML = `
+              <img src="${hotel.image}" alt="${hotel.name}" class="hotel-image">
+              <div class="hotel-details">
+                  <h2 class="hotel-name">${hotel.name}</h2>
+                  <p>Location: ${hotel.city}, ${hotel.country}</p>
+                  <p>${hotel.description}</p>
+                  <p class="hotel-price">$${hotel.price}/night</p>
+                  <button class="search-btn" onclick="editHotel(${hotel.id})">Edit</button>
+                  <button class="delete-btn" onclick="deleteHotel(${hotel.id})">Delete</button>
+              </div>
+          `;
+          return card;
+      }
 
-        {% comment %} async function Createhotel() {
-            try {
-                const response = await fetch('/Api_forms/create-hotel/', {
-                method= 'POST'
-                credentials= 'include'
-            });
-            const data = await response.json();
-            if (re)
-            } catch(e) {
-                console.error('Error searching user hotels:', error);
-            }
-        } {% endcomment %}
+      {% comment %} async function Createhotel() {
+          try {
+              const response = await fetch('/Api_forms/create-hotel/', {
+              method= 'POST'
+              credentials= 'include'
+          });
+          const data = await response.json();
+          if (re)
+          } catch(e) {
+              console.error('Error searching user hotels:', error);
+          }
+      } {% endcomment %}
 
-        async function deleteHotel(hotelId) {
-            try {
-                const response = await fetch(`/api/delete-hotel/?hotel_id=${hotelId}`, {
-                    method: 'DELETE',
-                    credentials: 'include'
-                });
+      async function deleteHotel(hotelId) {
+          try {
+              const response = await fetch(`/api/delete-hotel/?hotel_id=${hotelId}`, {
+                  method: 'DELETE',
+                  credentials: 'include'
+              });
 
-                if (response.ok) {
-                    searchUserHotels(); // Refresh the list
-                } else {
-                    const errorData = await response.json();
-                    alert(`Error: ${errorData.error || 'Failed to delete hotel'}`);
-                }
-            } catch (error) {
-                console.error('Error deleting hotel:', error);
-                alert('An error occurred while deleting the hotel');
-            }
-        }
+              if (response.ok) {
+                  searchUserHotels(); // Refresh the list
+              } else {
+                  const errorData = await response.json();
+                  alert(`Error: ${errorData.error || 'Failed to delete hotel'}`);
+              }
+          } catch (error) {
+              console.error('Error deleting hotel:', error);
+              alert('An error occurred while deleting the hotel');
+          }
+      }
 
-        function editHotel(hotelId) {
-            // Redirect to hotel edit page
-            window.location.href = `/Api_forms/hotel/edit/`;
-        }
+      function editHotel(hotelId) {
+          // Redirect to hotel edit page
+          window.location.href = `/Api_forms/hotel/edit/`;
+      }
 
-        function changePage(direction) {
-            currentPage += direction;
-            if (currentPage < 1) currentPage = 1;
-            if (currentPage > totalPages) currentPage = totalPages;
-            searchUserHotels();
-        }
+      function changePage(direction) {
+          currentPage += direction;
+          if (currentPage < 1) currentPage = 1;
+          if (currentPage > totalPages) currentPage = totalPages;
+          searchUserHotels();
+      }
 
-        async function checkAuthStatus() {
-            try {
-                const response = await fetch('/user/isloggedin/', {
-                    method: 'GET',
-                    credentials: 'include'
-                });
+      async function checkAuthStatus() {
+          try {
+              const response = await fetch('/user/isloggedin/', {
+                  method: 'GET',
+                  credentials: 'include'
+              });
 
-                if (response.ok) {
-                    document.getElementById('authButtons').innerHTML = `
-                        <p style= 'padding: 30px'>Hi <strong>{{username}}</strong></a>
-                        <a href="#" class="sign-in-btn" onclick="logout()">Sign Out</a>
-                    `;
-                } else {
-                    alert('Must be logged in.')
-                    window.location.href = '/user/login/';
-                }
-            } catch (error) {
-                console.error('Error checking auth status:', error);
-                window.location.href = '/user/login/';
-            }
-        }
+              if (response.ok) {
+                  document.getElementById('authButtons').innerHTML = `
+                      <p style= 'padding: 30px'>Hi <strong>{{username}}</strong></a>
+                      <a href="#" class="sign-in-btn" onclick="logout()">Sign Out</a>
+                  `;
+              } else {
+                  alert('Must be logged in.')
+                  window.location.href = '/user/login/';
+              }
+          } catch (error) {
+              console.error('Error checking auth status:', error);
+              window.location.href = '/user/login/';
+          }
+      }
 
-        async function logout() {
-            try {
-                const response = await fetch('/user/logout/', {
-                    method: 'POST',
-                    credentials: 'include'
-                });
+      async function logout() {
+          try {
+              const response = await fetch('/user/logout/', {
+                  method: 'POST',
+                  credentials: 'include'
+              });
 
-                if (response.ok) {
-                    window.location.href = '/';
-                }
-            } catch (error) {
-                console.error('Logout failed:', error);
-            }
-        }
+              if (response.ok) {
+                  window.location.href = '/';
+              }
+          } catch (error) {
+              console.error('Logout failed:', error);
+          }
+      }
     </script>
-</body>
+  </body>
 </html>

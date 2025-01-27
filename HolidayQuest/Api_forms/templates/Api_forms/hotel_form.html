@@ -281,14 +281,11 @@
         }
 
         try {
-          const response = await fetch(
-            'http://127.0.0.1:8000/user/user_created_hotels/',
-            {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
+          const response = await fetch('/user/user_created_hotels/', {
+            headers: {
+              Authorization: `Bearer ${token}`
             }
-          );
+          });
 
           if (response.status === 401) {
             showLoginOverlay();
@@ -347,7 +344,7 @@
           return;
         }
 
-        fetch('http://127.0.0.1:8000/user/login/', {
+        fetch('/user/login/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -385,7 +382,7 @@
           return;
         }
 
-        fetch(`http://127.0.0.1:8000/api/delete-hotel/?hotel_id=${hotelId}`, {
+        fetch(`/api/delete-hotel/?hotel_id=${hotelId}`, {
           method: 'DELETE',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -451,7 +448,7 @@
             }
           });
 
-          fetch(`http://127.0.0.1:8000/api/edit-hotel/?hotel_id=${hotelId}`, {
+          fetch(`/api/edit-hotel/?hotel_id=${hotelId}`, {
             method: 'PUT',
             headers: {
               Authorization: `Bearer ${token}`
