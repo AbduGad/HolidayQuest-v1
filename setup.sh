@@ -1,6 +1,13 @@
 #!/bin/bash
 
+sudo apt update -y
+sudo apt-get install pkg-config -y
+
 # Step 1: Install MySQL
+sudo apt-get install libmysqlclient-dev -y
+
+sudo apt-get install python3-dev -y
+
 sudo apt-get install libmariadb3 libmariadb-dev -y
 
 echo "Installing MySQL..."
