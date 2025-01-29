@@ -385,7 +385,7 @@
           if (response.ok) {
             // User is authenticated
             document.getElementById('authButtons').innerHTML = `
-                        <a href="{% url 'userhotels' %}" class="sign-in-btn">Add Hotel</a>
+                        <a href="{% url 'userhotels' %}" class="sign-in-btn">My Hotels</a>
                         <a href="#" class="sign-in-btn" onclick="logout()">Sign Out</a>
                     `;
           } else {

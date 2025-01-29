@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Check if the script is run as root
+if [ "$(id -u)" -ne 0 ]; then
+	echo "Please run this script as root"
+	exit 1
+fi
+
+# Stop MySQL service if it's running
+echo "Stopping MySQL service..."
+systemctl stop mysql
+systemctl disable mysql
+
+# Remove MySQL packages
+echo "Removing MySQL packages..."
+apt-get purge mysql-server mysql-client mysql-common mysql-server-core-* mysql-client-core-*
+
+# Remove any unused packages
+echo "Removing unused dependencies..."
+apt-get autoremove -y
+
+# Remove MySQL configuration files
+echo "Removing MySQL configuration files..."
+rm -rf /etc/mysql /var/lib/mysql /var/log/mysql /var/run/mysqld
+
+# Remove MySQL user and group
+echo "Removing MySQL user and group..."
+deluser mysql
+delgroup mysql
+
+# Clean up package cache
+echo "Cleaning up package cache..."
+apt-get clean
+
+# Remove MySQL from apt cache
+echo "Removing MySQL from apt cache..."
+apt-get purge mysql*
+
+# Reboot system (optional)
+echo "Rebooting system to complete the uninstallation..."
+reboot
