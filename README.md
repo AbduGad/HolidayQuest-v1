@@ -1,8 +1,150 @@
+# Project Setup
+
+## Installation Instructions
+
+This project includes a setup script (`setup.sh`) that automates the installation of dependencies, database configuration, and user creation for MySQL.
+
+### Linux (Ubuntu) Setup
+
+#### 1. Run the Setup Script
+
+To install all dependencies and configure the database on **Ubuntu**, execute the following command:
+
+```sh
+sudo ./setup.sh
+```
+
+#### 2. What the Setup Script Does
+
+- Installs all required dependencies.
+- Installs and configures MySQL.
+- Creates a MySQL user named `user1` **without a password**.
+- Configures the database for the Django application.
+
+#### 3. Running the Django Application
+
+Once the setup is complete, you can start the Django application by running:
+
+```sh
+python3 ./HolidayQuest/manage.py runserver
+```
+
+### Windows Setup
+
+If you are using **Windows**, you will need to:
+
+#### 1. Install MySQL Manually
+
+- Download and install MySQL from the official website.
+- Create the `user1` account without a password manually.
+- Configure the database settings in your Django application accordingly.
+
+#### 2. Install Dependencies
+
+After configuring MySQL, install the project dependencies using:
+
+```sh
+pip install -r requirements.txt
+```
+
+#### 3. Running the Django Application
+
+Once MySQL is installed and configured, you can start the Django application by running:
+
+```sh
+python ./HolidayQuest/manage.py runserver
+```
+
+### Database Configuration
+
+If needed, you can change the database name and user credentials in the `settings.py` file:
+File location ``` HolidayQuest-v1\HolidayQuest\HolidayQuest\settings.py ```
+
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'your_database_name',
+        'USER': 'your_database_user',
+        'PASSWORD': 'your_password',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+```
+
+## Website Navigation
+
+Below are the key pages available in the application:
+
+### 🌍 Home Page
+> **Path:** `/`
+> 
+> The main landing page of the application.
+
+### 🔐 User Authentication
+
+#### 📝 Register
+> **Path:** `/user/register/`
+> 
+> Create a new user account.
+
+#### 🔑 Login
+> **Path:** `/user/login/`
+> 
+> Access an existing user account.
+
+### 🏨 Hotels Exploration
+> **Path:** `/hotels/`
+> 
+> Browse available hotels and view details.
+
+
+### 🏠 User-Posted Hotels
+> **Path:** `/userhotels/`
+> 
+> View hotels listed by individual users.
+
+### ➕ Create a New Hotel
+> **Path:** `/Api_forms/create-hotel/`
+> 
+> Submit a new hotel listing.
+
+### ✏️ Edit or Delete a Hotel
+> **Path:** `/Api_forms/hotel/edit/`
+> 
+> Modify or remove an existing hotel listing.
+
+
+### 🏢 A page used to display detailed information about a specific hotel
+> **Path:** `/Api_forms/hotel-detail/` 
+
+#### Parameters
+
+- `id`: The unique identifier for the hotel. In this example, the `id` is set to `1`, which corresponds to a specific hotel. You can modify this value to display details of different hotels.
+
+#### Usage
+
+This template page fetches the hotel data based on the `id` parameter in the URL and displays it in a user-friendly format.
+
+Example URL for hotel details:
+
+```
+/Api_forms/hotel-detail/?id=1
+```
+
+---
+
+For any issues or troubleshooting, please refer to the project documentation or contact support.
+
+
+# Apis
+----------------
 # 1- Create Hotel API
 
 ## Endpoint
 ```
-POST http://127.0.0.1:8000/api/create-hotel/
+POST /api/create-hotel/
 ```
 
 ## Description
@@ -90,7 +232,7 @@ If any of the required fields are missing or invalid, the API will return a 400 
 
 ## Endpoint
 ```
-GET http://127.0.0.1:8000/api/get-hotels/
+GET /api/get-hotels/
 ```
 
 ## Description
@@ -174,7 +316,7 @@ If there is an error with the request or pagination, the API will return a 400 s
 
 ## Endpoint
 ```
-GET http://127.0.0.1:8000/api/get-hotel/
+GET /api/get-hotel/
 ```
 
 ## Description
@@ -191,12 +333,12 @@ This API retrieves detailed information about a specific hotel by its `id` or `n
 ### Example Request
 #### By Hotel ID:
 ```plaintext
-GET http://127.0.0.1:8000/api/get-hotel/?id=1
+GET /api/get-hotel/?id=1
 ```
 
 #### By Hotel Name:
 ```plaintext
-GET http://127.0.0.1:8000/api/get-hotel/?hotel_name=Hotel%20D
+GET /api/get-hotel/?hotel_name=Hotel%20D
 ```
 
 ## Response
@@ -216,7 +358,7 @@ If the hotel is found, the API returns the hotel details in JSON format.
   "total_rooms": 50,
   "country": "Egypt",
   "city": "Cairo",
-  "image": "http://127.0.0.1:8000/media/hotels/hotel_d.jpg"
+  "image": "/media/hotels/hotel_d.jpg"
 }
 ```
 
@@ -251,7 +393,7 @@ If no hotel is found matching the provided `id` or `name`, the API will return a
 
 ## Endpoint
 ```
-GET http://127.0.0.1:8000/api/hotels/search?country=Jordan
+GET /api/hotels/search?country=Jordan
 ```
 
 ## Description
@@ -267,7 +409,7 @@ This API retrieves a list of hotels based on location or price range filters. Us
 
 ### Example Request
 ```plaintext
-GET http://127.0.0.1:8000/api/hotels/search?country=Egypt&city=luxor&min_price=50&max_price=600
+GET /api/hotels/search?country=Egypt&city=luxor&min_price=50&max_price=600
 ```
 
 ## Response
@@ -361,7 +503,7 @@ If there is an unexpected error, the API will return a generic error message.
 
 ## Endpoint
 ```
-PUT http://127.0.0.1:8000/api/edit-hotel/
+PUT /api/edit-hotel/
 ```
 
 ## Description
@@ -390,12 +532,12 @@ All fields are optional and will partially update the hotel record:
 ### Example Request
 #### By Hotel ID:
 ```plaintext
-PUT http://127.0.0.1:8000/api/edit-hotel/?hotel_id=1
+PUT /api/edit-hotel/?hotel_id=1
 ```
 
 #### By Hotel Name:
 ```plaintext
-PUT http://127.0.0.1:8000/api/edit-hotel/?name=four%20seasons
+PUT /api/edit-hotel/?name=four%20seasons
 ```
 
 #### Request Body (JSON):
@@ -486,7 +628,7 @@ If any validation error occurs (e.g., invalid data types, invalid field values),
 
 ## Endpoint
 ```
-DELETE http://127.0.0.1:8000/api/delete-hotel/
+DELETE /api/delete-hotel/
 ```
 
 ## Description
@@ -503,12 +645,12 @@ This API allows users to delete a hotel by specifying either its `hotel_id` or `
 ### Example Request
 #### By Hotel ID:
 ```plaintext
-DELETE http://127.0.0.1:8000/api/delete-hotel/?id=1
+DELETE /api/delete-hotel/?id=1
 ```
 
 #### By Hotel Name:
 ```plaintext
-DELETE http://127.0.0.1:8000/api/delete-hotel/?name=four%20seasons
+DELETE /api/delete-hotel/?name=four%20seasons
 ```
 
 ## Response
@@ -554,4 +696,3 @@ If no hotel is found matching the provided `id` or `name`, the API will return a
   status code 403 {"detail": "You are not authorized to Delete this hotel."}
   ```
 ---
-
